@@ -11,7 +11,7 @@ set -x
 
   printenv
 
-  if [[ "$INPUT_USER_EMAIL" ]]; then
+  if [ "$INPUT_USER_EMAIL" ]; then
     echo "USER_EMAIL = $INPUT_USER_EMAIL"
   else
     echo "Required argument 'INPUT_USER_EMAIL' missing!"
@@ -19,7 +19,7 @@ set -x
   fi
 
 
-  if [[ "$INPUT_USER_NAME" ]]; then
+  if [ "$INPUT_USER_NAME" ]; then
     echo "USER_NAME = $INPUT_USER_NAME"
   else
     echo "Required argument 'INPUT_USER_NAME' missing!"
@@ -27,7 +27,7 @@ set -x
   fi
 
 
-  if [[ "$INPUT_GITHUB_SECRET_PAT" ]]; then
+  if [ "$INPUT_GITHUB_SECRET_PAT" ]; then
     echo "GITHUB_SECRET_PAT = $INPUT_GITHUB_SECRET_PAT"
   else
     echo "Required argument 'INPUT_GITHUB_SECRET_PAT' missing!"
@@ -35,7 +35,7 @@ set -x
   fi
 
 
-  if [[ "$INPUT_GITHUB_WORKSPACE" ]]; then
+  if [ "$INPUT_GITHUB_WORKSPACE" ]; then
     echo "GITHUB_WORKSPACE = $INPUT_GITHUB_WORKSPACE"
   else
     echo "Required argument 'INPUT_GITHUB_WORKSPACE' missing!"
@@ -43,39 +43,56 @@ set -x
   fi
 
 
-  if [[ "$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN" ]]; then
+  if [ "$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN" ]; then
     echo "PUBLIC_GITIGNORE_NAME_PATTERN = $INPUT_PUBLIC_GITIGNORE_NAME_PATTERN"
   fi
 
 
-  if [[ "$INPUT_PRIVATE_DIR" ]]; then
+  if [ "$INPUT_PRIVATE_DIR" ]; then
     echo "PRIVATE_DIR = $INPUT_PRIVATE_DIR"
   fi
 
 
-  if [[ "$INPUT_PUBLIC_DIR" ]]; then
+  if [ "$INPUT_PUBLIC_DIR" ]; then
     echo "PUBLIC_DIR = $INPUT_PUBLIC_DIR"
   fi
 
 
-  if [[ "$INPUT_WORKING_BRANCH_NAME" ]]; then
+  if [ "$INPUT_WORKING_BRANCH_NAME" ]; then
     echo "WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
   fi
 
 
-  if [[ "$INPUT_COMMIT_MESSAGE" ]]; then
+  if [ "$INPUT_COMMIT_MESSAGE" ]; then
     echo "COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
   fi
 
 
-  if [[ "$INPUT_GIT_SERVER" ]]; then
+  if [ "$INPUT_GIT_SERVER" ]; then
     echo "GIT_SERVER = $INPUT_GIT_SERVER"
   fi
 
+  ####################################################### TODO: DEBUG STATEMENTS
   pwd
   ls -la .
   ls -la /
   ls -la ~/
+  PRIVATE_REPO_DIR="$INPUT_GITHUB_WORKSPACE/$INPUT_PRIVATE_DIR"
+  PUBLIC_REPO_DIR="$INPUT_GITHUB_WORKSPACE/$INPUT_PUBLIC_DIR"
+  echo "PRIVATE_REPO_DIR = $PRIVATE_REPO_DIR"
+  echo "PUBLIC_REPO_DIR  = $PUBLIC_REPO_DIR"
+  ####################################################### TODO: DEBUG STATEMENTS
+
+  # Start with a blank exclude file
+  ls -la "$PUBLIC_REPO_DIR"
+  PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
+  echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
+  # cat "/dev/null" > "$PUBLIC_GITIGNORE_FILE"
+  for f in $(find "$PRIVATE_REPO_DIR" -name "public.gitignore"); do
+    sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f" >> "$PUBLIC_GITIGNORE_FILE"
+    sed -nr "s|^([^#].+)$|${f}/\1|p" < $f | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN/(.+)$|\1\2|" >> "$PUBLIC_GITIGNORE_FILE"
+  done
+
 } 2>&1
 # if [ -z "$INPUT_SOURCE_FILE" ]
 # then
