@@ -60,7 +60,13 @@ set -x
   echo "Cloning public git repository"
   git config --global user.email "$INPUT_USER_EMAIL"
   git config --global user.name "$INPUT_USER_NAME"
-  git clone --single-branch --branch "$TARGET_BRANCH" "https://x-access-token:$INPUT_REPO_LEVEL_SEC@$INPUT_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
+  git clone --single-branch --branch "$GITHUB_BASE_REF" "https://x-access-token:$INPUT_REPO_LEVEL_SEC@$INPUT_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
+
+  git -C "$PUBLIC_REPO_DIR" fetch --all
+  if [ "$(git -C "$PUBLIC_REPO_DIR" branch -l "$TARGET_BRANCH")" ]; then
+    echo "TODO: Handle branch existing in public already"
+  fi
+  git -C "$PUBLIC_REPO_DIR" checkout -b "$TARGET_BRANCH"
 
 
   PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
@@ -72,12 +78,6 @@ set -x
 
   echo "INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
   INPUT_COMMIT_MESSAGE="Commit passed along by $GITHUB_ACTION_REPOSITORY. Original commit message: $INPUT_COMMIT_MESSAGE"
-
-  git -C "$PUBLIC_REPO_DIR" fetch --all
-  if [ "$(git -C "$PUBLIC_REPO_DIR" branch -l "$TARGET_BRANCH")" ]; then
-    echo "TODO: Handle branch existing in public already"
-  fi
-  git -C "$PUBLIC_REPO_DIR" checkout -b "$TARGET_BRANCH"
 
 
   # ####################################################### TODO: DEBUG STATEMENTS
