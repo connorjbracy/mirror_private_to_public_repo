@@ -7,13 +7,13 @@ inputs:
 
                   Default: github.actor'
     required: false
-    default: ${{ github.actor }}
+    default: '${{ github.actor }}'
   user_email:
     description: 'Email for the git commit.
 
                   Default: <user_name>@users.noreply.github.com'
     required: false
-    default: '@users.noreply.github.com'
+    default: '${{ github.actor }}@users.noreply.github.com'
   github_secret_pat:
     description: 'The GitHub Personal Access Token (PAT) with necessary
                   permissions to publish a commit in the public repository'

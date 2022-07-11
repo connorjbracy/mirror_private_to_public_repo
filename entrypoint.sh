@@ -19,17 +19,13 @@ set -x
     exit 1
   fi
 
-  exit
-  # if [ "$INPUT_USER_EMAIL" ]; then
-  #   echo "USER_EMAIL = $INPUT_USER_EMAIL"
-  # else
-  #   if [ $word = a* ]
-  #   then
-  #     echo "Starts with a"
-  #   else
-  #     echo "No match"
-  #   fi
-  # fi
+  if [ "$INPUT_USER_EMAIL" ]; then
+    echo "USER_EMAIL = $INPUT_USER_EMAIL"
+  else
+    echo "Required argument 'user_name' missing!"
+    echo "Please review your GitHub Actions script that called this Action."
+    exit 1
+  fi
 
 
   if [ "$INPUT_GITHUB_SECRET_PAT" ]; then
