@@ -1,82 +1,82 @@
 #!/bin/sh
 
-# export PS4="################################################################################ "
+export PS4="################################################################################ "
 # export PS4="$(awk '{if(NR==${LINENO} print length}') "
 
 set -e
 set -x
+{
+  # printf -- '-%.0s' {1..80}
+  # echo 'Hello, World!'
 
-# printf -- '-%.0s' {1..80}
-# echo 'Hello, World!'
+  printenv
 
-printenv
-
-if [[ "$INPUT_USER_EMAIL" ]]; then
-  echo "USER_EMAIL = $INPUT_USER_EMAIL"
-else
-  echo "Required argument 'INPUT_USER_EMAIL' missing!"
-  exit 1
-fi
-
-
-if [[ "$INPUT_USER_NAME" ]]; then
-  echo "USER_NAME = $INPUT_USER_NAME"
-else
-  echo "Required argument 'INPUT_USER_NAME' missing!"
-  exit 1
-fi
+  if [[ "$INPUT_USER_EMAIL" ]]; then
+    echo "USER_EMAIL = $INPUT_USER_EMAIL"
+  else
+    echo "Required argument 'INPUT_USER_EMAIL' missing!"
+    exit 1
+  fi
 
 
-if [[ "$INPUT_GITHUB_SECRET_PAT" ]]; then
-  echo "GITHUB_SECRET_PAT = $INPUT_GITHUB_SECRET_PAT"
-else
-  echo "Required argument 'INPUT_GITHUB_SECRET_PAT' missing!"
-  exit 1
-fi
+  if [[ "$INPUT_USER_NAME" ]]; then
+    echo "USER_NAME = $INPUT_USER_NAME"
+  else
+    echo "Required argument 'INPUT_USER_NAME' missing!"
+    exit 1
+  fi
 
 
-if [[ "$INPUT_GITHUB_WORKSPACE" ]]; then
-  echo "GITHUB_WORKSPACE = $INPUT_GITHUB_WORKSPACE"
-else
-  echo "Required argument 'INPUT_GITHUB_WORKSPACE' missing!"
-  exit 1
-fi
+  if [[ "$INPUT_GITHUB_SECRET_PAT" ]]; then
+    echo "GITHUB_SECRET_PAT = $INPUT_GITHUB_SECRET_PAT"
+  else
+    echo "Required argument 'INPUT_GITHUB_SECRET_PAT' missing!"
+    exit 1
+  fi
 
 
-if [[ "$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN" ]]; then
-  echo "PUBLIC_GITIGNORE_NAME_PATTERN = $INPUT_PUBLIC_GITIGNORE_NAME_PATTERN"
-fi
+  if [[ "$INPUT_GITHUB_WORKSPACE" ]]; then
+    echo "GITHUB_WORKSPACE = $INPUT_GITHUB_WORKSPACE"
+  else
+    echo "Required argument 'INPUT_GITHUB_WORKSPACE' missing!"
+    exit 1
+  fi
 
 
-if [[ "$INPUT_PRIVATE_DIR" ]]; then
-  echo "PRIVATE_DIR = $INPUT_PRIVATE_DIR"
-fi
+  if [[ "$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN" ]]; then
+    echo "PUBLIC_GITIGNORE_NAME_PATTERN = $INPUT_PUBLIC_GITIGNORE_NAME_PATTERN"
+  fi
 
 
-if [[ "$INPUT_PUBLIC_DIR" ]]; then
-  echo "PUBLIC_DIR = $INPUT_PUBLIC_DIR"
-fi
+  if [[ "$INPUT_PRIVATE_DIR" ]]; then
+    echo "PRIVATE_DIR = $INPUT_PRIVATE_DIR"
+  fi
 
 
-if [[ "$INPUT_WORKING_BRANCH_NAME" ]]; then
-  echo "WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
-fi
+  if [[ "$INPUT_PUBLIC_DIR" ]]; then
+    echo "PUBLIC_DIR = $INPUT_PUBLIC_DIR"
+  fi
 
 
-if [[ "$INPUT_COMMIT_MESSAGE" ]]; then
-  echo "COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
-fi
+  if [[ "$INPUT_WORKING_BRANCH_NAME" ]]; then
+    echo "WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
+  fi
 
 
-if [[ "$INPUT_GIT_SERVER" ]]; then
-  echo "GIT_SERVER = $INPUT_GIT_SERVER"
-fi
+  if [[ "$INPUT_COMMIT_MESSAGE" ]]; then
+    echo "COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
+  fi
 
-pwd
-ls -la .
-ls -la /
-ls -la ~/
 
+  if [[ "$INPUT_GIT_SERVER" ]]; then
+    echo "GIT_SERVER = $INPUT_GIT_SERVER"
+  fi
+
+  pwd
+  ls -la .
+  ls -la /
+  ls -la ~/
+} 2>&1
 # if [ -z "$INPUT_SOURCE_FILE" ]
 # then
 #   echo "Source file must be defined"
