@@ -37,11 +37,16 @@ set -x
   #   exit 2
   # fi
 
+  echo "INPUT_WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
+  # Rename for clarity of what it's purpose is within the script
+  TARGET_BRANCH=$INPUT_WORKING_BRANCH_NAME
+  # TODO: Resolve branch names
+
   PUBLIC_REPO_DIR=$(mktemp -d)
   echo "Cloning public git repository"
   git config --global user.email "$INPUT_USER_EMAIL"
   git config --global user.name "$INPUT_USER_NAME"
-  git clone --single-branch --branch "$INPUT_DESTINATION_BRANCH" "https://x-access-token:$INPUT_REPO_LEVEL_SEC@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$PUBLIC_REPO_DIR"
+  git clone --single-branch --branch "$TARGET_BRANCH" "https://x-access-token:$INPUT_REPO_LEVEL_SEC@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$PUBLIC_REPO_DIR"
 
 
   PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
@@ -50,11 +55,6 @@ set -x
   # public repo will be within the private repo and will cause problems when
   # copying so we need to add it to the (rsync).gitignore.
   echo "$PUBLIC_REPO_DIR" >> "$PUBLIC_GITIGNORE_FILE"
-
-  echo "INPUT_WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
-  # Rename for clarity of what it's purpose is within the script
-  TARGET_BRANCH=$INPUT_WORKING_BRANCH_NAME
-  # TODO: Resolve branch names
 
   echo "INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
   INPUT_COMMIT_MESSAGE="Commit passed along by $GITHUB_ACTION_REPOSITORY. Original commit message: $INPUT_COMMIT_MESSAGE"
