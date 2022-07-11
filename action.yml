@@ -28,14 +28,14 @@ inputs:
                   Default: "public.gitignore"'
     required: false
     default: 'public.gitignore'
-  private_dir:
+  private_subdir:
     description: 'The directory (relative to "GITHUB_WORKSPACE") where the
                   private repo lives within the GH Actions runner.
 
                   Default: "private"'
     required: false
     default: 'private'
-  public_dir:
+  public_subdir:
     description: 'The directory (relative to "GITHUB_WORKSPACE") where the
                   public repo lives (it is expected that the public repo was
                   checked out in the calling GH Actions runner)
