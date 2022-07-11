@@ -35,14 +35,14 @@ inputs:
                   Default: "private"'
     required: false
     default: 'private'
-  public_subdir:
-    description: 'The directory (relative to "GITHUB_WORKSPACE") where the
-                  public repo lives (it is expected that the public repo was
-                  checked out in the calling GH Actions runner)
+  # public_subdir:
+  #   description: 'The directory (relative to "GITHUB_WORKSPACE") where the
+  #                 public repo lives (it is expected that the public repo was
+  #                 checked out in the calling GH Actions runner)
 
-                  Default: "public"'
-    required: false
-    default: 'public'
+  #                 Default: "public"'
+  #   required: false
+  #   default: 'public'
   working_branch_name:
     description: 'The name of the target branch in the public repo.
 
@@ -74,7 +74,7 @@ runs:
     - ${{ inputs.user-email }}
     - ${{ inputs.public-gitignore-filename-convention }}
     - ${{ inputs.private-dir }}
-    - ${{ inputs.public-dir }}
+    # - ${{ inputs.public-dir }}
     - ${{ inputs.working-branch-name }}
     - ${{ inputs.commit-message }}
 branding:

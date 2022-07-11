@@ -29,12 +29,20 @@ set -x
     exit 2
   fi
 
-  # Construct path to public repo
-  PUBLIC_REPO_DIR="$GITHUB_WORKSPACE/$INPUT_PUBLIC_SUBDIR"
-  if [ ! -d "$PUBLIC_REPO_DIR" ]; then
-    echo "Could not find the directory containing the private repo: $PUBLIC_REPO_DIR"
-    exit 2
-  fi
+  # # Construct path to public repo
+  # PUBLIC_REPO_DIR="$GITHUB_WORKSPACE/$INPUT_PUBLIC_SUBDIR"
+  # if [ -d "$PUBLIC_REPO_DIR" ]; then
+  #   echo "Found another directory where we intend to clone the public repo: $PUBLIC_REPO_DIR"
+  #   echo "Please specify an empty/nonexistent directory for us to use for the public repo."
+  #   exit 2
+  # fi
+
+  PUBLIC_REPO_DIR=$(mktemp -d)
+  echo "Cloning public git repository"
+  git config --global user.email "$INPUT_USER_EMAIL"
+  git config --global user.name "$INPUT_USER_NAME"
+  git clone --single-branch --branch "$INPUT_DESTINATION_BRANCH" "https://x-access-token:$INPUT_REPO_LEVEL_SEC@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$PUBLIC_REPO_DIR"
+
 
   PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
   echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
