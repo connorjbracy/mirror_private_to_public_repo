@@ -11,65 +11,65 @@ set -x
 
 printenv
 
-if [[ "$INPUTS_USER_EMAIL" ]]; then
-  echo "USER_EMAIL = $INPUTS_USER_EMAIL"
+if [[ "$INPUT_USER_EMAIL" ]]; then
+  echo "USER_EMAIL = $INPUT_USER_EMAIL"
 else
-  echo "Required argument 'INPUTS_USER_EMAIL' missing!"
+  echo "Required argument 'INPUT_USER_EMAIL' missing!"
   exit 1
 fi
 
 
-if [[ "$INPUTS_USER_NAME" ]]; then
-  echo "USER_NAME = $INPUTS_USER_NAME"
+if [[ "$INPUT_USER_NAME" ]]; then
+  echo "USER_NAME = $INPUT_USER_NAME"
 else
-  echo "Required argument 'INPUTS_USER_NAME' missing!"
+  echo "Required argument 'INPUT_USER_NAME' missing!"
   exit 1
 fi
 
 
-if [[ "$INPUTS_GITHUB_SECRET_PAT" ]]; then
-  echo "GITHUB_SECRET_PAT = $INPUTS_GITHUB_SECRET_PAT"
+if [[ "$INPUT_GITHUB_SECRET_PAT" ]]; then
+  echo "GITHUB_SECRET_PAT = $INPUT_GITHUB_SECRET_PAT"
 else
-  echo "Required argument 'INPUTS_GITHUB_SECRET_PAT' missing!"
+  echo "Required argument 'INPUT_GITHUB_SECRET_PAT' missing!"
   exit 1
 fi
 
 
-if [[ "$INPUTS_GITHUB_WORKSPACE" ]]; then
-  echo "GITHUB_WORKSPACE = $INPUTS_GITHUB_WORKSPACE"
+if [[ "$INPUT_GITHUB_WORKSPACE" ]]; then
+  echo "GITHUB_WORKSPACE = $INPUT_GITHUB_WORKSPACE"
 else
-  echo "Required argument 'INPUTS_GITHUB_WORKSPACE' missing!"
+  echo "Required argument 'INPUT_GITHUB_WORKSPACE' missing!"
   exit 1
 fi
 
 
-if [[ "$INPUTS_PUBLIC_GITIGNORE_NAME_PATTERN" ]]; then
-  echo "PUBLIC_GITIGNORE_NAME_PATTERN = $INPUTS_PUBLIC_GITIGNORE_NAME_PATTERN"
+if [[ "$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN" ]]; then
+  echo "PUBLIC_GITIGNORE_NAME_PATTERN = $INPUT_PUBLIC_GITIGNORE_NAME_PATTERN"
 fi
 
 
-if [[ "$INPUTS_PRIVATE_DIR" ]]; then
-  echo "PRIVATE_DIR = $INPUTS_PRIVATE_DIR"
+if [[ "$INPUT_PRIVATE_DIR" ]]; then
+  echo "PRIVATE_DIR = $INPUT_PRIVATE_DIR"
 fi
 
 
-if [[ "$INPUTS_PUBLIC_DIR" ]]; then
-  echo "PUBLIC_DIR = $INPUTS_PUBLIC_DIR"
+if [[ "$INPUT_PUBLIC_DIR" ]]; then
+  echo "PUBLIC_DIR = $INPUT_PUBLIC_DIR"
 fi
 
 
-if [[ "$INPUTS_WORKING_BRANCH_NAME" ]]; then
-  echo "WORKING_BRANCH_NAME = $INPUTS_WORKING_BRANCH_NAME"
+if [[ "$INPUT_WORKING_BRANCH_NAME" ]]; then
+  echo "WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
 fi
 
 
-if [[ "$INPUTS_COMMIT_MESSAGE" ]]; then
-  echo "COMMIT_MESSAGE = $INPUTS_COMMIT_MESSAGE"
+if [[ "$INPUT_COMMIT_MESSAGE" ]]; then
+  echo "COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
 fi
 
 
-if [[ "$INPUTS_GIT_SERVER" ]]; then
-  echo "GIT_SERVER = $INPUTS_GIT_SERVER"
+if [[ "$INPUT_GIT_SERVER" ]]; then
+  echo "GIT_SERVER = $INPUT_GIT_SERVER"
 fi
 
 
