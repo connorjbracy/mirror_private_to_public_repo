@@ -44,33 +44,52 @@ set -x
   echo "$PUBLIC_REPO_DIR" >> "$PUBLIC_GITIGNORE_FILE"
 
   echo "INPUT_WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
+  # Rename for clarity of what it's purpose is within the script
+  TARGET_BRANCH=$INPUT_WORKING_BRANCH_NAME
   # TODO: Resolve branch names
 
   echo "INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
   INPUT_COMMIT_MESSAGE="Commit passed along by $GITHUB_ACTION_REPOSITORY. Original commit message: $INPUT_COMMIT_MESSAGE"
 
   git -C "$PUBLIC_REPO_DIR" fetch --all
-  if [ "$(git -C "$PUBLIC_REPO_DIR" branch -l "$INPUT_WORKING_BRANCH_NAME")" ]; then
+  if [ "$(git -C "$PUBLIC_REPO_DIR" branch -l "$TARGET_BRANCH")" ]; then
     echo "TODO: Handle branch existing in public already"
   fi
+  git -C "$PUBLIC_REPO_DIR" checkout -b "$TARGET_BRANCH"
 
 
-  ####################################################### TODO: DEBUG STATEMENTS
-  pwd
-  ls -la .
-  ls -la /
-  ls -la ~/
-  ####################################################### TODO: DEBUG STATEMENTS
+  # ####################################################### TODO: DEBUG STATEMENTS
+  # pwd
+  # ls -la .
+  # ls -la /
+  # ls -la ~/
+  # ####################################################### TODO: DEBUG STATEMENTS
 
   # Start with a blank exclude file
   ls -la "$PUBLIC_REPO_DIR"
   # cat "/dev/null" > "$PUBLIC_GITIGNORE_FILE"
   # for f in $(find "$PRIVATE_REPO_DIR" -name "public.gitignore"); do
-  find "$PRIVATE_REPO_DIR" -name "public.gitignore" | while read -r f; do
-    sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f" | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$(basename "$f")/(.+)$|\1\2|" >> "$PUBLIC_GITIGNORE_FILE"
+  find "$PRIVATE_REPO_DIR" -name "$INPUT_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
+  | while read -r f
+  do
+    sed -nr "s|^([^#].+)$|${f}/\1|p"                                     \
+    < "$f"                                                               \
+    | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$(basename "$f")/(.+)$|\1\2|" \
+    >> "$PUBLIC_GITIGNORE_FILE"
   done
   cat "$PUBLIC_GITIGNORE_FILE"
+  git -C "$PUBLIC_REPO_DIR" status
 
+  echo "Adding git commit"
+  git -C "$PUBLIC_REPO_DIR" add .
+  if git -C "$PUBLIC_REPO_DIR" status | grep -q "Changes to be committed"
+  then
+    git -C "$PUBLIC_REPO_DIR" commit --message "$INPUT_COMMIT_MESSAGE"
+    echo "Pushing git commit"
+    git -C "$PUBLIC_REPO_DIR" push -u origin HEAD:"$TARGET_BRANCH"
+  else
+    echo "No changes detected"
+  fi
 } 2>&1
 # if [ -z "$INPUT_SOURCE_FILE" ]
 # then
