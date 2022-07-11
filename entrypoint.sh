@@ -125,7 +125,7 @@ set -x
     git commit --message "$INPUT_COMMIT_MESSAGE"
     echo "Pushing git commit"
     # git push "https://github.com/connorjbracy/archived_projects.git" "$TARGET_BRANCH"
-    git push -u origin HEAD:test
+    git push -u origin HEAD:"$TARGET_BRANCH"
   else
     echo "No changes detected"
   fi
