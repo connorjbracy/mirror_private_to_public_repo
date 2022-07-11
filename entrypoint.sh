@@ -40,7 +40,7 @@ set -x
     PUBLIC_REPO_FULLNAME="$INPUT_DESTINATION_REPO"
   else
     PUBLIC_REPO_FULLNAME="$(            \
-      echo "$INPUT_DESTINATION_REPO"    \
+      echo "$GITHUB_REPOSITORY"         \
       | sed -nr 's|^(.+)_private$|\1|p' \
     )"
   fi
