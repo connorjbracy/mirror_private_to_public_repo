@@ -72,7 +72,10 @@ if [[ "$INPUT_GIT_SERVER" ]]; then
   echo "GIT_SERVER = $INPUT_GIT_SERVER"
 fi
 
-
+pwd
+ls -la .
+ls -la /
+ls -la ~/
 
 # if [ -z "$INPUT_SOURCE_FILE" ]
 # then
