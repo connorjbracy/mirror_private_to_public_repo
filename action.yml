@@ -65,10 +65,6 @@ inputs:
                   Default: <github.event.head_commit.message>'
     required: false
     default: ${{ github.event.head_commit.message }}
-  git_server:
-    description: 'Git server host, default github.com'
-    required: false
-    default: 'github.com'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -81,7 +77,6 @@ runs:
     - ${{ inputs.public-dir }}
     - ${{ inputs.working-branch-name }}
     - ${{ inputs.commit-message }}
-    - ${{ inputs.git-server }}
 branding:
   icon: 'git-commit'
   color: 'green'

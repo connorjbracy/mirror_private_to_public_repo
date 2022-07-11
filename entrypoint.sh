@@ -10,7 +10,7 @@ set -x
   printenv
   ####################################################### TODO: DEBUG STATEMENTS
 
-
+  # Remind users that a PAT will be needed for pushing the commit.
   if [ "$INPUT_GITHUB_SECRET_PAT" ]; then
     echo "GITHUB_SECRET_PAT = $INPUT_GITHUB_SECRET_PAT"
   else
@@ -22,20 +22,38 @@ set -x
 
   echo "INPUT_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
 
-  echo "INPUT_PRIVATE_SUBDIR = $INPUT_PRIVATE_SUBDIR"
+  # Construct path to private repo
   PRIVATE_REPO_DIR="$GITHUB_WORKSPACE/$INPUT_PRIVATE_SUBDIR"
-  echo "PRIVATE_REPO_DIR = $PRIVATE_REPO_DIR"
+  if [ ! -d "$PRIVATE_REPO_DIR" ]; then
+    echo "Could not find the directory containing the private repo: $PRIVATE_REPO_DIR"
+    exit 2
+  fi
 
-  echo "INPUT_PUBLIC_SUBDIR = $INPUT_PUBLIC_SUBDIR"
+  # Construct path to public repo
   PUBLIC_REPO_DIR="$GITHUB_WORKSPACE/$INPUT_PUBLIC_SUBDIR"
-  echo "PUBLIC_REPO_DIR = $PUBLIC_REPO_DIR"
+  if [ ! -d "$PUBLIC_REPO_DIR" ]; then
+    echo "Could not find the directory containing the private repo: $PUBLIC_REPO_DIR"
+    exit 2
+  fi
+
+  PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
+  echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
+  # If the GitHub Action was not configured to run in parallel checkout, the
+  # public repo will be within the private repo and will cause problems when
+  # copying so we need to add it to the (rsync).gitignore.
+  echo "$PUBLIC_REPO_DIR" >> "$PUBLIC_GITIGNORE_FILE"
 
   echo "INPUT_WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
+  # TODO: Resolve branch names
 
   echo "INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
   INPUT_COMMIT_MESSAGE="Commit passed along by $GITHUB_ACTION_REPOSITORY. Original commit message: $INPUT_COMMIT_MESSAGE"
 
-  echo "INPUT_GIT_SERVER = $INPUT_GIT_SERVER"
+  git -C "$PUBLIC_REPO_DIR" fetch --all
+  if [ "$(git -C "$PUBLIC_REPO_DIR" branch -l "$INPUT_WORKING_BRANCH_NAME")" ]; then
+    echo "TODO: Handle branch existing in public already"
+  fi
+
 
   ####################################################### TODO: DEBUG STATEMENTS
   pwd
@@ -46,8 +64,6 @@ set -x
 
   # Start with a blank exclude file
   ls -la "$PUBLIC_REPO_DIR"
-  PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
-  echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
   # cat "/dev/null" > "$PUBLIC_GITIGNORE_FILE"
   # for f in $(find "$PRIVATE_REPO_DIR" -name "public.gitignore"); do
   find "$PRIVATE_REPO_DIR" -name "public.gitignore" | while read -r f; do
