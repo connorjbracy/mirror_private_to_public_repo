@@ -1,32 +1,29 @@
 name: 'Mirror private repo changes in the dual public repo'
 description: 'Used to duplicate a single repo between an internal (private)
-              instance and a public facing instance'
+              instance and a public facing instance.'
 inputs:
+  github_secret_pat:
+    description: 'The GitHub Personal Access Token (PAT) with necessary
+                  permissions to publish a commit in the public repository'
+    required: true
   user_name:
     description: 'GitHub username for the commit.
 
-                  Default: github.actor'
+                  Default: <github.actor>'
     required: false
     default: '${{ github.actor }}'
   user_email:
     description: 'Email for the git commit.
 
-                  Default: <user_name>@users.noreply.github.com'
+                  Default: <github.actor>@users.noreply.github.com'
     required: false
     default: '${{ github.actor }}@users.noreply.github.com'
-  github_secret_pat:
-    description: 'The GitHub Personal Access Token (PAT) with necessary
-                  permissions to publish a commit in the public repository'
-    required: true
-  public_gitignore_name_pattern:
-    description: 'The filename pattern used to create a .gitignore for the
-                  public mirror. The given pattern should be a "find"
-                  appropriate glob that can locate all files needed to create
-                  the public repo .gitignore file. This set of files is
-                  important for allowing the private repo to track changes of
-                  internal files that should not be exposed publically (i.e.,
-                  they themselves are not .gitignore files, but will be
-                  aggregated to create one only for the public commits).
+  public_gitignore_filename_convention:
+    description: 'The conventioned used to name your files that store the list
+                  of files that should be in the .gitignore of the public repo,
+                  but which you want to track in your private repo. (i.e., they
+                  themselves are not .gitignore files, but will be aggregated to
+                  create one only for the public commits).
 
                   Default: "public.gitignore"'
     required: false
@@ -59,24 +56,27 @@ inputs:
                     --- Target branch IS owned by source PR author
                     --- Target branch is NOT owned by source PR author
 
-                  Default: <name_of_pull_request_branch>'
+                  Default: <github.head_ref>'
     required: false
+    default: ${{ github.head_ref }}
   commit_message:
-    description: 'A custom message for the commit'
+    description: 'A custom message for the commit.
+
+                  Default: <github.event.head_commit.message>'
     required: false
+    default: ${{ github.event.head_commit.message }}
   git_server:
     description: 'Git server host, default github.com'
     required: false
-    default: github.com
+    default: 'github.com'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.user-email }}
-    - ${{ inputs.user-name }}
     - ${{ inputs.github-secret-pat }}
-    - ${{ inputs.github-workspace }}
-    - ${{ inputs.public-gitignore-name-pattern }}
+    - ${{ inputs.user-name }}
+    - ${{ inputs.user-email }}
+    - ${{ inputs.public-gitignore-filename-convention }}
     - ${{ inputs.private-dir }}
     - ${{ inputs.public-dir }}
     - ${{ inputs.working-branch-name }}

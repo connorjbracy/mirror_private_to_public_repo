@@ -11,23 +11,6 @@ set -x
   ####################################################### TODO: DEBUG STATEMENTS
 
 
-  if [ "$INPUT_USER_NAME" ]; then
-    echo "USER_NAME = $INPUT_USER_NAME"
-  else
-    echo "Required argument 'user_name' missing!"
-    echo "Please review your GitHub Actions script that called this Action."
-    exit 1
-  fi
-
-  if [ "$INPUT_USER_EMAIL" ]; then
-    echo "USER_EMAIL = $INPUT_USER_EMAIL"
-  else
-    echo "Required argument 'user_name' missing!"
-    echo "Please review your GitHub Actions script that called this Action."
-    exit 1
-  fi
-
-
   if [ "$INPUT_GITHUB_SECRET_PAT" ]; then
     echo "GITHUB_SECRET_PAT = $INPUT_GITHUB_SECRET_PAT"
   else
@@ -36,35 +19,12 @@ set -x
     exit 1
   fi
 
-
-  if [ "$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN" ]; then
-    echo "PUBLIC_GITIGNORE_NAME_PATTERN = $INPUT_PUBLIC_GITIGNORE_NAME_PATTERN"
-  fi
-
-
-  if [ "$INPUT_PRIVATE_DIR" ]; then
-    echo "PRIVATE_DIR = $INPUT_PRIVATE_DIR"
-  fi
-
-
-  if [ "$INPUT_PUBLIC_DIR" ]; then
-    echo "PUBLIC_DIR = $INPUT_PUBLIC_DIR"
-  fi
-
-
-  if [ "$INPUT_WORKING_BRANCH_NAME" ]; then
-    echo "WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
-  fi
-
-
-  if [ "$INPUT_COMMIT_MESSAGE" ]; then
-    echo "COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
-  fi
-
-
-  if [ "$INPUT_GIT_SERVER" ]; then
-    echo "GIT_SERVER = $INPUT_GIT_SERVER"
-  fi
+  echo "INPUT_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
+  echo "INPUT_PRIVATE_DIR = $INPUT_PRIVATE_DIR"
+  echo "INPUT_PUBLIC_DIR = $INPUT_PUBLIC_DIR"
+  echo "INPUT_WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
+  echo "INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
+  echo "INPUT_GIT_SERVER = $INPUT_GIT_SERVER"
 
   ####################################################### TODO: DEBUG STATEMENTS
   pwd
