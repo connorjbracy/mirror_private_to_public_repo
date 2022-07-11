@@ -102,13 +102,27 @@ set -x
   cat "$PUBLIC_GITIGNORE_FILE"
   git -C "$PUBLIC_REPO_DIR" status
 
+
+  # echo "Adding git commit"
+  # git -C "$PUBLIC_REPO_DIR" add .
+  # if git -C "$PUBLIC_REPO_DIR" status | grep -q "Changes to be committed"
+  # then
+  #   git -C "$PUBLIC_REPO_DIR" commit --message "$INPUT_COMMIT_MESSAGE"
+  #   echo "Pushing git commit"
+  #   git -C "$PUBLIC_REPO_DIR" push -u origin HEAD:"$TARGET_BRANCH"
+  # else
+  #   echo "No changes detected"
+  # fi
+  cd "$PUBLIC_REPO_DIR"
+  git config --global user.email "$INPUT_USER_EMAIL"
+  git config --global user.name "$INPUT_USER_NAME"
   echo "Adding git commit"
-  git -C "$PUBLIC_REPO_DIR" add .
-  if git -C "$PUBLIC_REPO_DIR" status | grep -q "Changes to be committed"
+  git add .
+  if git status | grep -q "Changes to be committed"
   then
-    git -C "$PUBLIC_REPO_DIR" commit --message "$INPUT_COMMIT_MESSAGE"
+    git commit --message "$INPUT_COMMIT_MESSAGE"
     echo "Pushing git commit"
-    git -C "$PUBLIC_REPO_DIR" push -u origin HEAD:"$TARGET_BRANCH"
+    git push -u origin HEAD:"$TARGET_BRANCH"
   else
     echo "No changes detected"
   fi
