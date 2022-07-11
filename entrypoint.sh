@@ -53,7 +53,8 @@ set -x
 
   echo "INPUT_WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
   # Rename for clarity of what it's purpose is within the script
-  TARGET_BRANCH=$INPUT_WORKING_BRANCH_NAME
+  # TARGET_BRANCH=$INPUT_WORKING_BRANCH_NAME
+  TARGET_BRANCH='test'
   # TODO: Resolve branch names
 
   PUBLIC_REPO_DIR=$(mktemp -d)
