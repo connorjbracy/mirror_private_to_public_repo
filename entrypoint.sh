@@ -36,6 +36,20 @@ set -x
   #   echo "Please specify an empty/nonexistent directory for us to use for the public repo."
   #   exit 2
   # fi
+  if [ "$INPUT_DESTINATION_REPO" ]; then
+    PUBLIC_REPO_FULLNAME="$INPUT_DESTINATION_REPO"
+  else
+    PUBLIC_REPO_FULLNAME="$(            \
+      echo "$INPUT_DESTINATION_REPO"    \
+      | sed -nr 's|^(.+)_private$|\1|p' \
+    )"
+  fi
+  echo "INPUT_DESTINATION_REPO = $INPUT_DESTINATION_REPO"
+  echo "PUBLIC_REPO_FULLNAME = $PUBLIC_REPO_FULLNAME"
+  if [ ! $PUBLIC_REPO_FULLNAME ]; then
+    echo "We were not given a name for the public repo, nor could we automatically determine a suitable one from the private repo name. Please provide a public repo name through the 'destination_repo' argument."
+    exit 4
+  fi
 
   echo "INPUT_WORKING_BRANCH_NAME = $INPUT_WORKING_BRANCH_NAME"
   # Rename for clarity of what it's purpose is within the script
@@ -46,7 +60,7 @@ set -x
   echo "Cloning public git repository"
   git config --global user.email "$INPUT_USER_EMAIL"
   git config --global user.name "$INPUT_USER_NAME"
-  git clone --single-branch --branch "$TARGET_BRANCH" "https://x-access-token:$INPUT_REPO_LEVEL_SEC@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$PUBLIC_REPO_DIR"
+  git clone --single-branch --branch "$TARGET_BRANCH" "https://x-access-token:$INPUT_REPO_LEVEL_SEC@$INPUT_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
 
 
   PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"

@@ -35,14 +35,13 @@ inputs:
                   Default: "private"'
     required: false
     default: 'private'
-  # public_subdir:
-  #   description: 'The directory (relative to "GITHUB_WORKSPACE") where the
-  #                 public repo lives (it is expected that the public repo was
-  #                 checked out in the calling GH Actions runner)
+  public_repo:
+    description: 'The full name of the repo that is used as the public facing
+                  instance of the pair.
 
-  #                 Default: "public"'
-  #   required: false
-  #   default: 'public'
+                  Default: The name of the private repo, with a presumed
+                           "_private" truncated from the end.'
+    required: false
   working_branch_name:
     description: 'The name of the target branch in the public repo.
 
@@ -65,6 +64,12 @@ inputs:
                   Default: <github.event.head_commit.message>'
     required: false
     default: ${{ github.event.head_commit.message }}
+  git_server:
+    description: 'Git server host.
+
+                  Default: github.com'
+    required: false
+    default: 'github.com'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -74,9 +79,10 @@ runs:
     - ${{ inputs.user-email }}
     - ${{ inputs.public-gitignore-filename-convention }}
     - ${{ inputs.private-dir }}
-    # - ${{ inputs.public-dir }}
+    - ${{ inputs.public-dir }}
     - ${{ inputs.working-branch-name }}
     - ${{ inputs.commit-message }}
+    - ${{ inputs.git-server }}
 branding:
   icon: 'git-commit'
   color: 'green'
