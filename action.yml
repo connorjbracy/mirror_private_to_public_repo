@@ -1,0 +1,90 @@
+name: 'Mirror private repo changes in the dual public repo'
+description: 'Used to duplicate a single repo between an internal (private)
+              instance and a public facing instance'
+inputs:
+  user_email:
+    description: 'Email for the git commit'
+    required: true
+  user_name:
+    description: 'GitHub username for the commit'
+    required: true
+  github_secret_pat:
+    description: 'The GitHub Personal Access Token (PAT) with necessary
+                  permissions to publish a commit in the public repository'
+    required: true
+  github_workspace:
+    description: 'The "GITHUB_WORKSPACE" directory of the calling GH Actions'
+    required: true
+  public_gitignore_name_pattern:
+    description: 'The filename pattern used to create a .gitignore for the
+                  public mirror. The given pattern should be a "find"
+                  appropriate glob that can locate all files needed to create
+                  the public repo .gitignore file. This set of files is
+                  important for allowing the private repo to track changes of
+                  internal files that should not be exposed publically (i.e.,
+                  they themselves are not .gitignore files, but will be
+                  aggregated to create one only for the public commits).
+
+                  Default: "*/public.gitignore"'
+    required: false
+    default: '*/public.gitignore'
+  private_dir:
+    description: 'The directory where the desired changes committed to the
+                  private repo live within the GH Actions runner.
+
+                  Can be either an absolute path or relative to
+                  "GITHUB_WORKSPACE".
+
+                  Default: "private"'
+    required: false
+    default: 'private'
+  public_dir:
+    description: 'The directory where the public repo lives (it is expected that
+                  the public repo was checked out in the calling GH Actions
+                  runner)
+
+                  Can be either an absolute path or relative to
+                  "GITHUB_WORKSPACE".
+
+                  Default: "public"'
+    required: false
+    default: 'public'
+  working_branch_name:
+    description: 'The name of the target branch in the public repo.
+
+                  TODO: Resolve following possabilities
+                    - Target branch does NOT exist
+                    - Target branch DOES exist
+                    -- Target branch is a simple BRANCH
+                    --- Target PR IS owned by source PR author
+                    --- Target PR is NOT owned by source PR author
+                    -- Target branch is a PULL REQUEST
+                    --- Target branch IS owned by source PR author
+                    --- Target branch is NOT owned by source PR author
+
+                  Default: <name_of_pull_request_branch>'
+    required: false
+  commit_message:
+    description: 'A custom message for the commit'
+    required: false
+  git_server:
+    description: 'Git server host, default github.com'
+    required: false
+    default: github.com
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.user-email }}
+    - ${{ inputs.user-name }}
+    - ${{ inputs.github-secret-pat }}
+    - ${{ inputs.github-workspace }}
+    - ${{ inputs.public-gitignore-name-pattern }}
+    - ${{ inputs.private-dir }}
+    - ${{ inputs.public-dir }}
+    - ${{ inputs.working-branch-name }}
+    - ${{ inputs.commit-message }}
+    - ${{ inputs.git-server }}
+branding:
+  icon: 'git-commit'
+  color: 'green'
