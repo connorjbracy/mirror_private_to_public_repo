@@ -89,9 +89,10 @@ set -x
   echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
   # cat "/dev/null" > "$PUBLIC_GITIGNORE_FILE"
   for f in $(find "$PRIVATE_REPO_DIR" -name "public.gitignore"); do
-    sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f" >> "$PUBLIC_GITIGNORE_FILE"
+    # sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f" >> "$PUBLIC_GITIGNORE_FILE"
     sed -nr "s|^([^#].+)$|${f}/\1|p" < $f | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN/(.+)$|\1\2|" >> "$PUBLIC_GITIGNORE_FILE"
   done
+  cat "$PUBLIC_GITIGNORE_FILE"
 
 } 2>&1
 # if [ -z "$INPUT_SOURCE_FILE" ]
