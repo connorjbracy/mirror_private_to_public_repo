@@ -2,18 +2,21 @@ name: 'Mirror private repo changes in the dual public repo'
 description: 'Used to duplicate a single repo between an internal (private)
               instance and a public facing instance'
 inputs:
-  user_email:
-    description: 'Email for the git commit'
-    required: true
   user_name:
-    description: 'GitHub username for the commit'
-    required: true
+    description: 'GitHub username for the commit.
+
+                  Default: github.actor'
+    required: false
+    default: ${{ github.actor }}
+  user_email:
+    description: 'Email for the git commit.
+
+                  Default: <user_name>@users.noreply.github.com'
+    required: false
+    default: '@users.noreply.github.com'
   github_secret_pat:
     description: 'The GitHub Personal Access Token (PAT) with necessary
                   permissions to publish a commit in the public repository'
-    required: true
-  github_workspace:
-    description: 'The "GITHUB_WORKSPACE" directory of the calling GH Actions'
     required: true
   public_gitignore_name_pattern:
     description: 'The filename pattern used to create a .gitignore for the
@@ -29,22 +32,16 @@ inputs:
     required: false
     default: 'public.gitignore'
   private_dir:
-    description: 'The directory where the desired changes committed to the
-                  private repo live within the GH Actions runner.
-
-                  Can be either an absolute path or relative to
-                  "GITHUB_WORKSPACE".
+    description: 'The directory (relative to "GITHUB_WORKSPACE") where the
+                  private repo lives within the GH Actions runner.
 
                   Default: "private"'
     required: false
     default: 'private'
   public_dir:
-    description: 'The directory where the public repo lives (it is expected that
-                  the public repo was checked out in the calling GH Actions
-                  runner)
-
-                  Can be either an absolute path or relative to
-                  "GITHUB_WORKSPACE".
+    description: 'The directory (relative to "GITHUB_WORKSPACE") where the
+                  public repo lives (it is expected that the public repo was
+                  checked out in the calling GH Actions runner)
 
                   Default: "public"'
     required: false

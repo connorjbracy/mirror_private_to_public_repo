@@ -10,14 +10,6 @@ set -x
   printenv
   ####################################################### TODO: DEBUG STATEMENTS
 
-  if [ "$INPUT_USER_EMAIL" ]; then
-    echo "USER_EMAIL = $INPUT_USER_EMAIL"
-  else
-    echo "Required argument 'user_email' missing!"
-    echo "Please review your GitHub Actions script that called this Action."
-    exit 1
-  fi
-
 
   if [ "$INPUT_USER_NAME" ]; then
     echo "USER_NAME = $INPUT_USER_NAME"
@@ -27,6 +19,18 @@ set -x
     exit 1
   fi
 
+  exit
+  # if [ "$INPUT_USER_EMAIL" ]; then
+  #   echo "USER_EMAIL = $INPUT_USER_EMAIL"
+  # else
+  #   if [ $word = a* ]
+  #   then
+  #     echo "Starts with a"
+  #   else
+  #     echo "No match"
+  #   fi
+  # fi
+
 
   if [ "$INPUT_GITHUB_SECRET_PAT" ]; then
     echo "GITHUB_SECRET_PAT = $INPUT_GITHUB_SECRET_PAT"
@@ -35,15 +39,6 @@ set -x
     echo "Please review your GitHub Actions script that called this Action."
     exit 1
   fi
-
-
-  # if [ "$INPUT_GITHUB_WORKSPACE" ]; then
-  #   echo "GITHUB_WORKSPACE = $INPUT_GITHUB_WORKSPACE"
-  # else
-  #   echo "Required argument 'github_workspace' missing!"
-  #   echo "Please review your GitHub Actions script that called this Action. The default way of passing "
-  #   exit 1
-  # fi
 
 
   if [ "$INPUT_PUBLIC_GITIGNORE_NAME_PATTERN" ]; then
