@@ -75,7 +75,7 @@ set -x
   # public repo will be within the private repo and will cause problems when
   # copying so we need to add it to the (rsync).gitignore.
   echo "$PUBLIC_REPO_DIR" >> "$PUBLIC_GITIGNORE_FILE"
-  echo ".gitignore" >> "$PUBLIC_GITIGNORE_FILE"
+  # echo ".gitignore" >> "$PUBLIC_GITIGNORE_FILE"
 
   echo "INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
   INPUT_COMMIT_MESSAGE="Commit passed along by $GITHUB_ACTION_REPOSITORY. Original commit message: $INPUT_COMMIT_MESSAGE"
