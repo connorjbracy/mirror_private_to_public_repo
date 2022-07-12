@@ -1,11 +1,11 @@
 #!/bin/sh
 
 sectionheader() {
-  echo "######################################## $1"
+  echo "################################################################################ $1"
 }
 
 statementheader() {
-  echo "########## $1"
+  echo "######################################## $1"
 }
 
 longecho() {
@@ -28,12 +28,12 @@ else
   exit 1
 fi
 
-# # Construct path to private repo
-# PRIVATE_REPO_DIR="$(realpath "$GITHUB_WORKSPACE/$INPUT_MY_PRIVATE_SUBDIR")"
-# if [ ! -d "$PRIVATE_REPO_DIR" ]; then
-#   echo "Could not find the directory containing the private repo: $PRIVATE_REPO_DIR"
-#   exit 2
-# fi
+# Construct path to private repo
+PRIVATE_REPO_DIR="$(realpath "$GITHUB_WORKSPACE/$INPUT_MY_PRIVATE_SUBDIR")"
+if [ ! -d "$PRIVATE_REPO_DIR" ]; then
+  echo "Could not find the directory containing the private repo: $PRIVATE_REPO_DIR"
+  exit 2
+fi
 # PRIVATE_REPO_GIT_CONFIG_FULLNAME="$(                        \
 #   git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url \
 #   | sed -nr 's|^git@github\.com:(\w+/\w+)\.git$|\1|p'       \
@@ -88,14 +88,30 @@ ls -la .
 
 # echo "Copying contents to git repo"
 sectionheader "Copying contents to git repo"
-mkdir -p $CLONE_DIR/$INPUT_DESTINATION_FOLDER
-if [ -z "$INPUT_USE_RSYNC" ]
-then
-  printcmd cp -R "$INPUT_SOURCE_FILE" "$DEST_COPY"
-else
-  echo "rsync mode detected"
-  printcmd rsync -avrh "$INPUT_SOURCE_FILE" "$DEST_COPY"
-fi
+# mkdir -p $CLONE_DIR/$INPUT_DESTINATION_FOLDER
+# if [ -z "$INPUT_USE_RSYNC" ]
+# then
+#   printcmd cp -R "$INPUT_SOURCE_FILE" "$DEST_COPY"
+# else
+#   echo "rsync mode detected"
+#   printcmd rsync -avrh "$INPUT_SOURCE_FILE" "$DEST_COPY"
+# fi
+################################################################################
+PUBLIC_REPO_DIR=$CLONE_DIR
+PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
+echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
+find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
+| while read -r f
+do
+  sed -nr "s|^([^#].+)$|${f}/\1|p"                                     \
+  < "$f"                                                               \
+  | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$(basename "$f")/(.+)$|\1\2|" \
+  >> "$PUBLIC_GITIGNORE_FILE"
+done
+printcmd cat "$PUBLIC_GITIGNORE_FILE"
+git -C "$PUBLIC_REPO_DIR" status
+################################################################################
+
 
 sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
