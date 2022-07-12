@@ -2,23 +2,44 @@ name: 'Mirror private repo changes in the dual public repo'
 description: 'Used to duplicate a single repo between an internal (private)
               instance and a public facing instance.'
 inputs:
-  github_secret_pat:
+  destination_repo:
+    description: 'Working "destination_repo"'
+    required: false
+  destination_branch:
+    description: 'Working "destination_branch"'
+    required: false
+  destination_folder:
+    description: 'Working "destination_folder"'
+    required: false
+  user_email:
+    description: 'Working "user_email"'
+    required: false
+  user_name:
+    description: 'Working "user_name"'
+    required: false
+  commit_message:
+    description: 'Working "commit_message"'
+    required: false
+  repo_level_sec:
+    description: 'Working "repo_level_sec"'
+    required: false
+  my_github_secret_pat:
     description: 'The GitHub Personal Access Token (PAT) with necessary
                   permissions to publish a commit in the public repository'
     required: true
-  user_name:
+  my_user_name:
     description: 'GitHub username for the commit.
 
                   Default: <github.actor>'
     required: false
     default: '${{ github.actor }}'
-  user_email:
+  my_user_email:
     description: 'Email for the git commit.
 
                   Default: <github.actor>@users.noreply.github.com'
     required: false
     default: '${{ github.actor }}@users.noreply.github.com'
-  public_gitignore_filename_convention:
+  my_public_gitignore_filename_convention:
     description: 'The conventioned used to name your files that store the list
                   of files that should be in the .gitignore of the public repo,
                   but which you want to track in your private repo. (i.e., they
@@ -28,21 +49,21 @@ inputs:
                   Default: "public.gitignore"'
     required: false
     default: 'public.gitignore'
-  private_subdir:
+  my_private_subdir:
     description: 'The directory (relative to "GITHUB_WORKSPACE") where the
                   private repo lives within the GH Actions runner.
 
                   Default: "private"'
     required: false
     default: 'private'
-  public_repo:
+  my_public_repo:
     description: 'The full name of the repo that is used as the public facing
                   instance of the pair.
 
                   Default: The name of the private repo, with a presumed
                            "_private" truncated from the end.'
     required: false
-  working_branch_name:
+  my_working_branch_name:
     description: 'The name of the target branch in the public repo.
 
                   TODO: Resolve following possabilities
@@ -58,13 +79,13 @@ inputs:
                   Default: <github.head_ref>'
     required: false
     default: ${{ github.head_ref }}
-  commit_message:
+  my_commit_message:
     description: 'A custom message for the commit.
 
                   Default: <github.event.head_commit.message>'
     required: false
     default: ${{ github.event.head_commit.message }}
-  git_server:
+  my_git_server:
     description: 'Git server host.
 
                   Default: github.com'
@@ -74,15 +95,23 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.github-secret-pat }}
-    - ${{ inputs.user-name }}
+    - ${{ inputs.destination-repo }}
+    - ${{ inputs.destination-branch }}
+    - ${{ inputs.destination-folder }}
     - ${{ inputs.user-email }}
-    - ${{ inputs.public-gitignore-filename-convention }}
-    - ${{ inputs.private-dir }}
-    - ${{ inputs.public-dir }}
-    - ${{ inputs.working-branch-name }}
+    - ${{ inputs.user-name }}
     - ${{ inputs.commit-message }}
-    - ${{ inputs.git-server }}
+    - ${{ inputs.repo-level-sec }}
+    # My args:
+    - ${{ inputs.my-github-secret-pat }}
+    - ${{ inputs.my-user-name }}
+    - ${{ inputs.my-user-email }}
+    - ${{ inputs.my-public-gitignore-filename-convention }}
+    - ${{ inputs.my-private-dir }}
+    - ${{ inputs.my-public-dir }}
+    - ${{ inputs.my-working-branch-name }}
+    - ${{ inputs.my-commit-message }}
+    - ${{ inputs.my-git-server }}
 branding:
   icon: 'git-commit'
   color: 'green'

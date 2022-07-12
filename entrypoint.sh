@@ -3,28 +3,6 @@
 set -e
 set -x
 
-# echo "INPUT_REPO_LEVEL_SEC"
-# echo $INPUT_REPO_LEVEL_SEC
-
-# echo "printenv"
-# printenv
-# echo "printenv | grep API_TOKEN_GITHUB"
-# printenv | grep -i "API_TOKEN_GITHUB"
-# echo "printenv | grep API_TOKEN_GITHUB | wc -l"
-# printenv | grep -i "API_TOKEN_GITHUB" | wc -l
-# echo "printenv | grep secret"
-# printenv | grep -i "secret"
-# echo "printenv | grep secret | wc"
-# printenv | grep -i "secret" | wc -l
-# echo "printenv | grep action"
-# printenv | grep -i "action"
-# echo "printenv | grep action | wc"
-# printenv | grep -i "action" | wc -l
-# echo "printenv | grep TOKEN"
-# printenv | grep -i "TOKEN"
-# echo "printenv | grep TOKEN | wc"
-# printenv | grep -i "TOKEN" | wc -l
-
 if [ -z "$INPUT_SOURCE_FILE" ]
 then
   echo "Source file must be defined"
@@ -94,15 +72,3 @@ then
 else
   echo "No changes detected"
 fi
-################################################################################
-# if git status | grep -q "Changes to be committed"
-# then
-#   git commit --message "Update from https://github.com/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
-#   echo "Pushing git commit"
-#   git push -u origin HEAD:$INPUT_DESTINATION_HEAD_BRANCH
-#   echo "Creating a pull request"
-#   gh pr create -t $INPUT_DESTINATION_HEAD_BRANCH \
-#                -b $INPUT_DESTINATION_HEAD_BRANCH \
-#                -B $INPUT_DESTINATION_BASE_BRANCH \
-#                -H $INPUT_DESTINATION_HEAD_BRANCH \
-#                   $PULL_REQUEST_REVIEWERS
