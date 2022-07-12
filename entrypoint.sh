@@ -4,7 +4,7 @@ export PS4="####################################################################
 
 set -e
 set -x
-{
+{ # Execute in a block that feeds stderr to stdout to avoid interleaving
   # Remind users that a PAT will be needed for pushing the commit.
   if [ "$INPUT_MY_GITHUB_SECRET_PAT" ]; then
     echo "GITHUB_SECRET_PAT = $INPUT_MY_GITHUB_SECRET_PAT"
@@ -12,6 +12,13 @@ set -x
     echo "Required argument 'github_secret_pat' missing!"
     echo "Please review your GitHub Actions script that called this Action."
     exit 1
+  fi
+
+  # Construct path to private repo
+  PRIVATE_REPO_DIR="$(realpath "$GITHUB_WORKSPACE/$INPUT_MY_PRIVATE_SUBDIR")"
+  if [ ! -d "$PRIVATE_REPO_DIR" ]; then
+    echo "Could not find the directory containing the private repo: $PRIVATE_REPO_DIR"
+    exit 2
   fi
 
   if [ -z "$INPUT_SOURCE_FILE" ]
