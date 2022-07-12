@@ -2,6 +2,9 @@ name: 'Mirror private repo changes in the dual public repo'
 description: 'Used to duplicate a single repo between an internal (private)
               instance and a public facing instance.'
 inputs:
+  source_file:
+    description: 'Working "source_file"'
+    required: false
   destination_repo:
     description: 'Working "destination_repo"'
     required: false
@@ -95,6 +98,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.source-file }}
     - ${{ inputs.destination-repo }}
     - ${{ inputs.destination-branch }}
     - ${{ inputs.destination-folder }}
