@@ -97,12 +97,16 @@ sectionheader "Copying contents to git repo"
 #   printcmd rsync -avrh "$INPUT_SOURCE_FILE" "$DEST_COPY"
 # fi
 ################################################################################
+echo "INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
 PUBLIC_REPO_DIR=$CLONE_DIR
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
 echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
 find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
 | while read -r f
 do
+  printcmd echo "File: $f"
+  printcmd sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f"
+  printcmd basename "$f"
   sed -nr "s|^([^#].+)$|${f}/\1|p"                                     \
   < "$f"                                                               \
   | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$(basename "$f")/(.+)$|\1\2|" \
