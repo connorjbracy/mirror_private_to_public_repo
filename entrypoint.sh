@@ -100,6 +100,7 @@ sectionheader "Copying contents to git repo"
 echo "INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
 PUBLIC_REPO_DIR=$CLONE_DIR
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
+TMP_GITIGNORE_FILE="./.gitignore"
 echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
 find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
 | while read -r f
@@ -113,8 +114,15 @@ do
   sed -nr "s|^([^#].+)$|${f}/\1|p"                                     \
   < "$f"                                                               \
   | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$(basename "$f")/(.+)$|\1\2|" \
-  >> "$PUBLIC_GITIGNORE_FILE"
+  >> "$TMP_GITIGNORE_FILE"
 done
+# Remove redundancies created by running this script more than once (which will
+# happen over time). Doing this, rather than starting a fresh file, allows for a
+# .gitignore to exist in the public repo without cluttering it (rather than
+# having to generate one each time, the lifetime of which would be the duration
+# of this run)
+cat "$PUBLIC_GITIGNORE_FILE" >> "$TMP_GITIGNORE_FILE"
+cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
 printcmd cat "$PUBLIC_GITIGNORE_FILE"
 git -C "$PUBLIC_REPO_DIR" status
 ################################################################################
