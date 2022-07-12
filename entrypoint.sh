@@ -1,7 +1,11 @@
 #!/bin/sh
 
-statementheader() {
+sectionheader() {
   echo "######################################## $1"
+}
+
+statementheader() {
+  echo "########## $1"
 }
 
 longecho() {
@@ -41,20 +45,20 @@ fi
 #     'private_subdir': $INPUT_MY_PRIVATE_SUBDIR"
 # fi
 
-statementheader "Check for INPUT_SOURCE_FILE = $INPUT_SOURCE_FILE"
+sectionheader "Check for INPUT_SOURCE_FILE = $INPUT_SOURCE_FILE"
 if [ -z "$INPUT_SOURCE_FILE" ]
 then
   echo "Source file must be defined"
   return 1
 fi
 
-statementheader "Check for INPUT_GIT_SERVER = $INPUT_GIT_SERVER"
+sectionheader "Check for INPUT_GIT_SERVER = $INPUT_GIT_SERVER"
 if [ -z "$INPUT_GIT_SERVER" ]
 then
   INPUT_GIT_SERVER="github.com"
 fi
 
-statementheader "Check for INPUT_DESTINATION_BRANCH = $INPUT_DESTINATION_BRANCH"
+sectionheader "Check for INPUT_DESTINATION_BRANCH = $INPUT_DESTINATION_BRANCH"
 if [ -z "$INPUT_DESTINATION_BRANCH" ]
 then
   INPUT_DESTINATION_BRANCH=main
@@ -64,12 +68,12 @@ OUTPUT_BRANCH="$INPUT_DESTINATION_BRANCH"
 CLONE_DIR=$(mktemp -d)
 
 # echo "Cloning destination git repository"
-statementheader "Cloning public repo to tempdir = $CLONE_DIR"
+sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
 git config --global user.email "$INPUT_USER_EMAIL"
 git config --global user.name "$INPUT_USER_NAME"
 git clone --single-branch --branch $INPUT_DESTINATION_BRANCH "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 
-statementheader "Check for INPUT_RENAME = $INPUT_RENAME"
+sectionheader "Check for INPUT_RENAME = $INPUT_RENAME"
 if [ ! -z "$INPUT_RENAME" ]
 then
   echo "Setting new filename: ${INPUT_RENAME}"
@@ -77,13 +81,13 @@ then
 else
   DEST_COPY="$CLONE_DIR/$INPUT_DESTINATION_FOLDER"
 fi
-statementheader "Concluded DEST_COPY = $DEST_COPY"
+sectionheader "Concluded DEST_COPY = $DEST_COPY"
 
-statementheader "Showing cwd contents ($(pwd))"
+sectionheader "Showing cwd contents ($(pwd))"
 ls -la .
 
 # echo "Copying contents to git repo"
-statementheader "Copying contents to git repo"
+sectionheader "Copying contents to git repo"
 mkdir -p $CLONE_DIR/$INPUT_DESTINATION_FOLDER
 if [ -z "$INPUT_USE_RSYNC" ]
 then
@@ -93,28 +97,28 @@ else
   printcmd rsync -avrh "$INPUT_SOURCE_FILE" "$DEST_COPY"
 fi
 
-statementheader "Changing to public clone dir"
+sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
-statementheader "Copying date to file to force commit"
+sectionheader "Copying date to file to force commit"
 printcmd date > "$CLONE_DIR/force_commit.txt"
 
-statementheader "Check for INPUT_DESTINATION_BRANCH_CREATE = $INPUT_DESTINATION_BRANCH_CREATE"
+sectionheader "Check for INPUT_DESTINATION_BRANCH_CREATE = $INPUT_DESTINATION_BRANCH_CREATE"
 if [ ! -z "$INPUT_DESTINATION_BRANCH_CREATE" ]
 then
   echo "Creating new branch: ${INPUT_DESTINATION_BRANCH_CREATE}"
   git checkout -b "$INPUT_DESTINATION_BRANCH_CREATE"
   OUTPUT_BRANCH="$INPUT_DESTINATION_BRANCH_CREATE"
 fi
-statementheader "Concluded OUTPUT_BRANCH = $OUTPUT_BRANCH"
+sectionheader "Concluded OUTPUT_BRANCH = $OUTPUT_BRANCH"
 
-statementheader "Check for INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
+sectionheader "Check for INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
 if [ -z "$INPUT_COMMIT_MESSAGE" ]
 then
   INPUT_COMMIT_MESSAGE="Update from https://$INPUT_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
 fi
 
 # echo "Adding git commit"
-statementheader "Adding git commit"
+sectionheader "Adding git commit"
 printcmd git add .
 if git status | grep -q "Changes to be committed"
 then
