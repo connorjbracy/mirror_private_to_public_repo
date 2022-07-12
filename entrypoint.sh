@@ -107,6 +107,9 @@ do
   printcmd echo "File: $f"
   printcmd sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f"
   printcmd basename "$f"
+  # 1) Removed comment/blank lines from source ".gitignore" files
+  # 2) Strip out paths to make entries relative to public repo base directory
+  # 3) Dump entries into $PUBLIC_REPO/.gitignore
   sed -nr "s|^([^#].+)$|${f}/\1|p"                                     \
   < "$f"                                                               \
   | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$(basename "$f")/(.+)$|\1\2|" \

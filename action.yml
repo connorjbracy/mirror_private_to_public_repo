@@ -109,8 +109,8 @@ runs:
     - ${{ inputs.my-user-name }}
     - ${{ inputs.my-user-email }}
     - ${{ inputs.my-public-gitignore-filename-convention }}
-    - ${{ inputs.my-private-dir }}
-    - ${{ inputs.my-public-dir }}
+    - ${{ inputs.my-private-subdir }}
+    - ${{ inputs.my-public-repo }}
     - ${{ inputs.my-working-branch-name }}
     - ${{ inputs.my-commit-message }}
     - ${{ inputs.my-git-server }}
