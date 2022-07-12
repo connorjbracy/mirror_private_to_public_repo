@@ -105,9 +105,9 @@ echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
 find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
 | while read -r f
 do
-  printcmd echo "File: $f"
-  printcmd sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f"
-  printcmd basename "$f"
+  # printcmd echo "File: $f"
+  # printcmd sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f"
+  # printcmd basename "$f"
   # 1) Removed comment/blank lines from source ".gitignore" files
   # 2) Strip out paths to make entries relative to public repo base directory
   # 3) Dump entries into $PUBLIC_REPO/.gitignore
@@ -124,7 +124,8 @@ done
 cat "$PUBLIC_GITIGNORE_FILE" >> "$TMP_GITIGNORE_FILE"
 cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
 printcmd cat "$PUBLIC_GITIGNORE_FILE"
-git -C "$PUBLIC_REPO_DIR" status
+printcmd git -C "$PUBLIC_REPO_DIR" status
+printcmd rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR" "$PUBLIC_REPO_DIR"
 ################################################################################
 
 
