@@ -51,6 +51,7 @@ set -x
   fi
 
   cd "$CLONE_DIR"
+  date > "$CLONE_DIR/force_commit.txt"
 
   if [ ! -z "$INPUT_DESTINATION_BRANCH_CREATE" ]
   then
