@@ -6,8 +6,8 @@ set -e
 set -x
 {
   # Remind users that a PAT will be needed for pushing the commit.
-  if [ "$INPUT_GITHUB_SECRET_PAT" ]; then
-    echo "GITHUB_SECRET_PAT = $INPUT_GITHUB_SECRET_PAT"
+  if [ "$INPUT_MY_GITHUB_SECRET_PAT" ]; then
+    echo "GITHUB_SECRET_PAT = $INPUT_MY_GITHUB_SECRET_PAT"
   else
     echo "Required argument 'github_secret_pat' missing!"
     echo "Please review your GitHub Actions script that called this Action."
@@ -36,7 +36,7 @@ set -x
   echo "Cloning destination git repository"
   git config --global user.email "$INPUT_USER_EMAIL"
   git config --global user.name "$INPUT_USER_NAME"
-  git clone --single-branch --branch $INPUT_DESTINATION_BRANCH "https://x-access-token:$INPUT_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
+  git clone --single-branch --branch $INPUT_DESTINATION_BRANCH "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 
   if [ ! -z "$INPUT_RENAME" ]
   then

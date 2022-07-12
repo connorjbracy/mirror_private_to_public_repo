@@ -23,9 +23,6 @@ inputs:
   commit_message:
     description: 'Working "commit_message"'
     required: false
-  # repo_level_sec:
-  #   description: 'Working "repo_level_sec"'
-  #   required: false
   my_github_secret_pat:
     description: 'The GitHub Personal Access Token (PAT) with necessary
                   permissions to publish a commit in the public repository'
@@ -105,7 +102,6 @@ runs:
     - ${{ inputs.user-email }}
     - ${{ inputs.user-name }}
     - ${{ inputs.commit-message }}
-    # - ${{ inputs.repo-level-sec }}
     # My args:
     - ${{ inputs.my-github-secret-pat }}
     - ${{ inputs.my-user-name }}
