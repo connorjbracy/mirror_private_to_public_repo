@@ -126,6 +126,12 @@ cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
 printcmd cat "$PUBLIC_GITIGNORE_FILE"
 printcmd git -C "$PUBLIC_REPO_DIR" status
 printcmd rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR" "$PUBLIC_REPO_DIR"
+statementheader "Printing ownership info of /tmp"
+ls -la "$PRIVATE_REPO_DIR/.."
+statementheader "Printing ownership info of public/"
+ls -la "$PRIVATE_REPO_DIR"
+statementheader "Printing ownership info of public/private"
+ls -la "$PRIVATE_REPO_DIR/private"
 ################################################################################
 
 
