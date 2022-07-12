@@ -124,14 +124,15 @@ done
 cat "$PUBLIC_GITIGNORE_FILE" >> "$TMP_GITIGNORE_FILE"
 cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
 printcmd cat "$PUBLIC_GITIGNORE_FILE"
+printcmd git -C "$PUBLIC_REPO_DIR" status
 printcmd rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR/" "$PUBLIC_REPO_DIR"
+################################################################################
+
 
 sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
 sectionheader "Copying date to file to force commit"
 printcmd date > "$CLONE_DIR/force_commit.txt"
-printcmd git -C "$PUBLIC_REPO_DIR" status
-################################################################################
 
 sectionheader "Check for INPUT_DESTINATION_BRANCH_CREATE = $INPUT_DESTINATION_BRANCH_CREATE"
 if [ ! -z "$INPUT_DESTINATION_BRANCH_CREATE" ]
