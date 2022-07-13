@@ -73,8 +73,17 @@ git config --global user.name "$INPUT_USER_NAME"
 git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 
 cd "$CLONE_DIR"
-
 printcmd git branch -a
+
+PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
+PUBLIC_ORIGIN_HEAD_REF="$(git branch -a | grep "$PUBLIC_ORIGIN_BRANCH_NAME")"
+if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
+  echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
+  git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
+else
+  echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
+  git checkout -b "$GITHUB_HEAD_REF"
+fi
 
 exit 0
 
