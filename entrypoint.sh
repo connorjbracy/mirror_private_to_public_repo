@@ -68,7 +68,7 @@ CLONE_DIR=$(mktemp -d)
 sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
 git config --global user.email "$INPUT_MY_USER_EMAIL"
 git config --global user.name "$INPUT_MY_USER_NAME"
-git clone "$GITHUB_BASE_REF" "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
+git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 # git -C "$CLONE_DIR" fetch --all
 
 sectionheader "Copying contents to git repo"
