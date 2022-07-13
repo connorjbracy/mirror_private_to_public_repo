@@ -8,9 +8,6 @@ inputs:
   destination_repo:
     description: 'Working "destination_repo"'
     required: false
-  destination_branch:
-    description: 'Working "destination_branch"'
-    required: false
   destination_folder:
     description: 'Working "destination_folder"'
     required: false
@@ -38,36 +35,6 @@ inputs:
                   Default: <github.actor>@users.noreply.github.com'
     required: false
     default: '${{ github.actor }}@users.noreply.github.com'
-  my_commit_message:
-    description: 'A custom message for the commit.
-
-                  Default: <github.event.head_commit.message>'
-    required: false
-    default: ${{ github.event.head_commit.message }}
-  my_git_server:
-    description: 'Git server host.
-
-                  Default: github.com'
-    required: false
-    default: 'github.com'
-  ##################################################### My args | To incorporate
-  my_public_gitignore_filename_convention:
-    description: 'The conventioned used to name your files that store the list
-                  of files that should be in the .gitignore of the public repo,
-                  but which you want to track in your private repo. (i.e., they
-                  themselves are not .gitignore files, but will be aggregated to
-                  create one only for the public commits).
-
-                  Default: "public.gitignore"'
-    required: false
-    default: 'public.gitignore'
-  my_public_repo:
-    description: 'The full name of the repo that is used as the public facing
-                  instance of the pair.
-
-                  Default: The name of the private repo, with a presumed
-                           "_private" truncated from the end.'
-    required: false
   my_working_branch_name:
     description: 'The name of the target branch in the public repo.
 
@@ -84,16 +51,45 @@ inputs:
                   Default: <github.head_ref>'
     required: false
     default: ${{ github.head_ref }}
+  my_commit_message:
+    description: 'A custom message for the commit.
+
+                  Default: <github.event.head_commit.message>'
+    required: false
+  my_public_repo:
+    description: 'The full name of the repo that is used as the public facing
+                  instance of the pair.
+
+                  Default: The name of the private repo, with a presumed
+                           "_private" truncated from the end.'
+    required: false
+    default: ${{ github.event.head_commit.message }}
+  my_public_gitignore_filename_convention:
+    description: 'The conventioned used to name your files that store the list
+                  of files that should be in the .gitignore of the public repo,
+                  but which you want to track in your private repo. (i.e., they
+                  themselves are not .gitignore files, but will be aggregated to
+                  create one only for the public commits).
+
+                  Default: "public.gitignore"'
+    required: false
+    default: 'public.gitignore'
+  my_git_server:
+    description: 'Git server host.
+
+                  Default: github.com'
+    required: false
+    default: 'github.com'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.destination-repo }}
-    - ${{ inputs.destination-branch }}
-    - ${{ inputs.destination-folder }}
-    - ${{ inputs.user-email }}
-    - ${{ inputs.user-name }}
-    - ${{ inputs.commit-message }}
+    # - ${{ inputs.destination-repo }}
+    # - ${{ inputs.destination-branch }}
+    # - ${{ inputs.destination-folder }}
+    # - ${{ inputs.user-email }}
+    # - ${{ inputs.user-name }}
+    # - ${{ inputs.commit-message }}
     # My args:
     - ${{ inputs.my-github-secret-pat }}
     - ${{ inputs.my-user-name }}

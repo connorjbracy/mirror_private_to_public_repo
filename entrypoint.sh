@@ -51,16 +51,7 @@ fi
 #   exit 3
 # fi
 
-sectionheader "Check for INPUT_MY_GIT_SERVER = $INPUT_MY_GIT_SERVER"
-if [ -z "$INPUT_MY_GIT_SERVER" ]; then
-  INPUT_MY_GIT_SERVER="github.com"
-fi
-
-sectionheader "Check for INPUT_DESTINATION_BRANCH = $INPUT_DESTINATION_BRANCH"
-if [ -z "$INPUT_DESTINATION_BRANCH" ]; then
-  INPUT_DESTINATION_BRANCH=main
-fi
-OUTPUT_BRANCH="$INPUT_DESTINATION_BRANCH"
+INPUT_MY_GIT_SERVER=${INPUT_MY_GIT_SERVER:-"github.com"}
 
 CLONE_DIR=$(mktemp -d)
 
@@ -122,20 +113,20 @@ printcmd date > "$CLONE_DIR/force_commit.txt"
 
 # printcmd git fetch --all
 # printcmd git branch -a
-
-PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
+WORKING_BRANCH_NAME=${INPUTS_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
+PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
 PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
-statementheader "Looking for head_ref(=$GITHUB_HEAD_REF) in origin"
-PUBLIC_ORIGIN_HEAD_REF="$(                                 \
-  git branch -a                                            \
+statementheader "Looking for '$WORKING_BRANCH_NAME' in origin"
+PUBLIC_ORIGIN_HEAD_REF="$(                                       \
+  git branch -a                                                  \
   | sed -nr "s|^\s*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)\s*$|\1|p" \
 )"
 if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
-  git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
+  git switch -c "$WORKING_BRANCH_NAME" "$PUBLIC_ORIGIN_HEAD_REF"
 else
   echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
-  git checkout -b "$GITHUB_HEAD_REF"
+  git checkout -b "$WORKING_BRANCH_NAME"
 fi
 
 
