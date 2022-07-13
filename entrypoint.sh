@@ -9,7 +9,7 @@ statementheader() {
 }
 
 longecho() {
-  echo "$1" | sed 's/^[[:space:]]*//'
+  echo "$1" | sed -r 's|^ *||' | sed -r 's|\\t|    |g'
 }
 
 printcmd() {
@@ -34,16 +34,21 @@ if [ ! -d "$PRIVATE_REPO_DIR" ]; then
   echo "Could not find the directory containing the private repo: $PRIVATE_REPO_DIR"
   exit 2
 fi
-# PRIVATE_REPO_GIT_CONFIG_FULLNAME="$(                        \
-#   git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url \
-#   | sed -nr 's|^git@github\.com:(\w+/\w+)\.git$|\1|p'       \
-# )"
-# if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != $GITHUB_REPOSITORY ]; then
-#   echo "Using the given argument
-#     'private_subdir': $INPUT_MY_PRIVATE_SUBDIR
-
-#     'private_subdir': $INPUT_MY_PRIVATE_SUBDIR"
-# fi
+PRIVATE_REPO_GIT_CONFIG_FULLNAME="$(                        \
+  git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url \
+  | sed -nr 's|^git@github\.com:(\w+/\w+)\.git$|\1|p'       \
+)"
+if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != "$GITHUB_REPOSITORY" ]; then
+  longecho "Using the given argument
+    \t'private_subdir': $INPUT_MY_PRIVATE_SUBDIR
+    we were unable to find a directory corresponding to the expected
+    github repository:
+    \t'github.repository': $GITHUB_REPOSITORY
+    Instead, we found:
+    \t$ git -C \"$PRIVATE_REPO_DIR\" config --get remote.origin.url
+    \t> $PRIVATE_REPO_GIT_CONFIG_FULLNAME"
+  exit 3
+fi
 
 sectionheader "Check for INPUT_SOURCE_FILE = $INPUT_SOURCE_FILE"
 if [ -z "$INPUT_SOURCE_FILE" ]
