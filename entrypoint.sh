@@ -46,15 +46,8 @@ if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != "$GITHUB_REPOSITORY" ]; then
     \t'github.repository': $GITHUB_REPOSITORY
     Instead, we found:
     \t$ git -C \"$PRIVATE_REPO_DIR\" config --get remote.origin.url
-    \t> $PRIVATE_REPO_GIT_CONFIG_FULLNAME"
+    \t> \$PRIVATE_REPO_GIT_CONFIG_FULLNAME=$(git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url)"
   exit 3
-fi
-
-sectionheader "Check for INPUT_SOURCE_FILE = $INPUT_SOURCE_FILE"
-if [ -z "$INPUT_SOURCE_FILE" ]
-then
-  echo "Source file must be defined"
-  return 1
 fi
 
 sectionheader "Check for INPUT_GIT_SERVER = $INPUT_GIT_SERVER"
