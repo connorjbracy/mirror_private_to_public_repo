@@ -82,7 +82,8 @@ if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
 else
   echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
-  git checkout -b "$GITHUB_HEAD_REF"
+  git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_BRANCH_NAME"
+  # git checkout -b "$GITHUB_HEAD_REF"
 fi
 
 exit 0
