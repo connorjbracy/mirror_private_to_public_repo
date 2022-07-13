@@ -69,17 +69,9 @@ sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
 git config --global user.email "$INPUT_MY_USER_EMAIL"
 git config --global user.name "$INPUT_MY_USER_NAME"
 git clone --single-branch --branch "$GITHUB_BASE_REF" "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
-git -C "$CLONE_DIR" fetch --all
+# git -C "$CLONE_DIR" fetch --all
 
 sectionheader "Copying contents to git repo"
-# mkdir -p $CLONE_DIR/$INPUT_DESTINATION_FOLDER
-# if [ -z "$INPUT_USE_RSYNC" ]
-# then
-#   printcmd cp -R "$INPUT_SOURCE_FILE" "$DEST_COPY"
-# else
-#   echo "rsync mode detected"
-#   printcmd rsync -avrh "$INPUT_SOURCE_FILE" "$DEST_COPY"
-# fi
 ################################################################################
 echo "INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
 PUBLIC_REPO_DIR=$CLONE_DIR
@@ -128,6 +120,7 @@ printcmd date > "$CLONE_DIR/force_commit.txt"
 
 
 
+printcmd git fetch --all
 printcmd git branch -a
 
 PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
