@@ -38,6 +38,8 @@ PRIVATE_REPO_GIT_CONFIG_FULLNAME="$(                        \
   git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url \
   | sed -nr 's|^git@github\.com:(\w+/\w+)\.git$|\1|p'       \
 )"
+ls -la "$PRIVATE_REPO_DIR"
+git -C "$PRIVATE_REPO_DIR" config --local -l
 if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != "$GITHUB_REPOSITORY" ]; then
   longecho "Using the given argument
     \t'private_subdir': $INPUT_MY_PRIVATE_SUBDIR
