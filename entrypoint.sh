@@ -129,8 +129,11 @@ PUBLIC_ORIGIN_HEAD_REF="$(                                 \
   git branch -a                                            \
   | sed -nr "s|^($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)$|\1|p" \
 )"
-printcmd git branch -a
-printcmd git branch -a | sed -nr "s|^($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)$|\1|p"
+statementheader "git branch -a"
+git branch -a
+statementheader "git branch -a | sed"
+git branch -a | sed -nr "s|^($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)$|\1|p"
+statementheader "Checking if..."
 if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
   git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
