@@ -34,29 +34,23 @@ if [ ! -d "$PRIVATE_REPO_DIR" ]; then
   echo "Could not find the directory containing the private repo: $PRIVATE_REPO_DIR"
   exit 2
 fi
-PRIVATE_REPO_GIT_CONFIG_FULLNAME="$(                        \
-  git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url \
-  | sed -nr 's|^.*github\.com/(\w+/\w+)(\.git)?$|\1|p'   \
-)"
-ls -la "$PRIVATE_REPO_DIR"
-cd "$PRIVATE_REPO_DIR"
-printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
-printcmd git config -l
-printcmd git remote -v
-printcmd cd .git
-printcmd more FETCH_HEAD
+# TODO: Resolve why GitHub Actions doesn't do this properly...
+# PRIVATE_REPO_GIT_CONFIG_FULLNAME="$(                        \
+#   git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url \
+#   | sed -nr 's|^.*github\.com[:/](\w+/\w+)(\.git)?$|\1|p'   \
+# )"
 
-if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != "$GITHUB_REPOSITORY" ]; then
-  longecho "Using the given argument
-    \t'private_subdir': $INPUT_MY_PRIVATE_SUBDIR
-    we were unable to find a directory corresponding to the expected
-    github repository:
-    \t'github.repository': $GITHUB_REPOSITORY
-    Instead, we found:
-    \t$ git -C \"$PRIVATE_REPO_DIR\" config --get remote.origin.url=$(git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url)
-    \t> \$PRIVATE_REPO_GIT_CONFIG_FULLNAME=$PRIVATE_REPO_GIT_CONFIG_FULLNAME"
-  exit 3
-fi
+# if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != "$GITHUB_REPOSITORY" ]; then
+#   longecho "Using the given argument
+#     \t'private_subdir': $INPUT_MY_PRIVATE_SUBDIR
+#     we were unable to find a directory corresponding to the expected
+#     github repository:
+#     \t'github.repository': $GITHUB_REPOSITORY
+#     Instead, we found:
+#     \t$ git -C \"$PRIVATE_REPO_DIR\" config --get remote.origin.url=$(git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url)
+#     \t> \$PRIVATE_REPO_GIT_CONFIG_FULLNAME=$PRIVATE_REPO_GIT_CONFIG_FULLNAME"
+#   exit 3
+# fi
 
 sectionheader "Check for INPUT_GIT_SERVER = $INPUT_GIT_SERVER"
 if [ -z "$INPUT_GIT_SERVER" ]
