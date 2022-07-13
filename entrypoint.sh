@@ -127,12 +127,12 @@ PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
 PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
 PUBLIC_ORIGIN_HEAD_REF="$(                                 \
   git branch -a                                            \
-  | sed -nr "s|^($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)$|\1|p" \
+  | sed -nr "s|^\s*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)\s*$|\1|p" \
 )"
 statementheader "git branch -a"
 git branch -a
 statementheader "git branch -a | sed 's|^($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)$|\1|p'"
-git branch -a | sed -nr "s|^[[:space:]]*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)[[:space:]]*$|\1|p"
+git branch -a | sed -nr "s|^\s*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)\s*$|\1|p"
 statementheader "Checking if..."
 if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
