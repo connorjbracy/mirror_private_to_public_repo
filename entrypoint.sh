@@ -53,8 +53,8 @@ if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != "$GITHUB_REPOSITORY" ]; then
     github repository:
     \t'github.repository': $GITHUB_REPOSITORY
     Instead, we found:
-    \t$ git -C \"$PRIVATE_REPO_DIR\" config --get remote.origin.url
-    \t> \$PRIVATE_REPO_GIT_CONFIG_FULLNAME=$(git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url)"
+    \t$ git -C \"$PRIVATE_REPO_DIR\" config --get remote.origin.url=$(git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url)
+    \t> \$PRIVATE_REPO_GIT_CONFIG_FULLNAME=$PRIVATE_REPO_GIT_CONFIG_FULLNAME"
   exit 3
 fi
 
