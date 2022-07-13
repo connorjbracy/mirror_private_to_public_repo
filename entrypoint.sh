@@ -36,7 +36,7 @@ if [ ! -d "$PRIVATE_REPO_DIR" ]; then
 fi
 PRIVATE_REPO_GIT_CONFIG_FULLNAME="$(                        \
   git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url \
-  | sed -nr 's|^.*github\.com[:/](\w+/\w+)(\.git)?$|\1|p'   \
+  | sed -nr 's|^.*github\.com/(\w+/\w+)(\.git)?$|\1|p'   \
 )"
 ls -la "$PRIVATE_REPO_DIR"
 cd "$PRIVATE_REPO_DIR"
