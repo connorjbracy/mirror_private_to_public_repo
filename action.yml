@@ -14,15 +14,6 @@ inputs:
   destination_folder:
     description: 'Working "destination_folder"'
     required: false
-  user_email:
-    description: 'Working "user_email"'
-    required: false
-  user_name:
-    description: 'Working "user_name"'
-    required: false
-  commit_message:
-    description: 'Working "commit_message"'
-    required: false
   ##################################################### My args | Incorporated
   my_github_secret_pat:
     description: 'The GitHub Personal Access Token (PAT) with necessary
@@ -35,7 +26,6 @@ inputs:
                   Default: "." (i.e., the GITHUB_WORKSPACE directory)'
     required: false
     default: '.'
-  ##################################################### My args | To incorporate
   my_user_name:
     description: 'GitHub username for the commit.
 
@@ -48,6 +38,19 @@ inputs:
                   Default: <github.actor>@users.noreply.github.com'
     required: false
     default: '${{ github.actor }}@users.noreply.github.com'
+  my_commit_message:
+    description: 'A custom message for the commit.
+
+                  Default: <github.event.head_commit.message>'
+    required: false
+    default: ${{ github.event.head_commit.message }}
+  my_git_server:
+    description: 'Git server host.
+
+                  Default: github.com'
+    required: false
+    default: 'github.com'
+  ##################################################### My args | To incorporate
   my_public_gitignore_filename_convention:
     description: 'The conventioned used to name your files that store the list
                   of files that should be in the .gitignore of the public repo,
@@ -81,18 +84,6 @@ inputs:
                   Default: <github.head_ref>'
     required: false
     default: ${{ github.head_ref }}
-  my_commit_message:
-    description: 'A custom message for the commit.
-
-                  Default: <github.event.head_commit.message>'
-    required: false
-    default: ${{ github.event.head_commit.message }}
-  my_git_server:
-    description: 'Git server host.
-
-                  Default: github.com'
-    required: false
-    default: 'github.com'
 runs:
   using: 'docker'
   image: 'Dockerfile'

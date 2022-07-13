@@ -39,7 +39,6 @@ fi
 #   git -C "$PRIVATE_REPO_DIR" config --get remote.origin.url \
 #   | sed -nr 's|^.*github\.com[:/](\w+/\w+)(\.git)?$|\1|p'   \
 # )"
-
 # if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != "$GITHUB_REPOSITORY" ]; then
 #   longecho "Using the given argument
 #     \t'private_subdir': $INPUT_MY_PRIVATE_SUBDIR
@@ -52,9 +51,9 @@ fi
 #   exit 3
 # fi
 
-sectionheader "Check for INPUT_GIT_SERVER = $INPUT_GIT_SERVER"
-if [ -z "$INPUT_GIT_SERVER" ]; then
-  INPUT_GIT_SERVER="github.com"
+sectionheader "Check for INPUT_MY_GIT_SERVER = $INPUT_MY_GIT_SERVER"
+if [ -z "$INPUT_MY_GIT_SERVER" ]; then
+  INPUT_MY_GIT_SERVER="github.com"
 fi
 
 sectionheader "Check for INPUT_DESTINATION_BRANCH = $INPUT_DESTINATION_BRANCH"
@@ -67,38 +66,11 @@ CLONE_DIR=$(mktemp -d)
 
 # echo "Cloning destination git repository"
 sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
-git config --global user.email "$INPUT_USER_EMAIL"
-git config --global user.name "$INPUT_USER_NAME"
-git clone --single-branch --branch "$GITHUB_BASE_REF" "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
+git config --global user.email "$INPUT_MY_USER_EMAIL"
+git config --global user.name "$INPUT_MY_USER_NAME"
+git clone --single-branch --branch "$GITHUB_BASE_REF" "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 git -C "$CLONE_DIR" fetch --all
-# git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 
-# cd "$CLONE_DIR"
-# printcmd git branch -a
-
-# PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
-# PUBLIC_ORIGIN_HEAD_REF="$(git branch -a | grep "$PUBLIC_ORIGIN_BRANCH_NAME")"
-# if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
-#   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
-#   git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
-# else
-#   echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
-#   git checkout -b "$GITHUB_HEAD_REF"
-# fi
-
-sectionheader "Check for INPUT_RENAME = $INPUT_RENAME"
-if [ ! -z "$INPUT_RENAME" ]; then
-  echo "Setting new filename: ${INPUT_RENAME}"
-  DEST_COPY="$CLONE_DIR/$INPUT_DESTINATION_FOLDER/$INPUT_RENAME"
-else
-  DEST_COPY="$CLONE_DIR/$INPUT_DESTINATION_FOLDER"
-fi
-sectionheader "Concluded DEST_COPY = $DEST_COPY"
-
-sectionheader "Showing cwd contents ($(pwd))"
-ls -la .
-
-# echo "Copying contents to git repo"
 sectionheader "Copying contents to git repo"
 # mkdir -p $CLONE_DIR/$INPUT_DESTINATION_FOLDER
 # if [ -z "$INPUT_USE_RSYNC" ]
@@ -178,16 +150,16 @@ if [ ! -z "$INPUT_DESTINATION_BRANCH_CREATE" ]; then
 fi
 sectionheader "Concluded OUTPUT_BRANCH = $OUTPUT_BRANCH"
 
-sectionheader "Check for INPUT_COMMIT_MESSAGE = $INPUT_COMMIT_MESSAGE"
-if [ -z "$INPUT_COMMIT_MESSAGE" ]; then
-  INPUT_COMMIT_MESSAGE="Update from https://$INPUT_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+sectionheader "Check for INPUT_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
+if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
+  INPUT_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
 fi
 
 # echo "Adding git commit"
 sectionheader "Adding git commit"
 printcmd git add .
 if git status | grep -q "Changes to be committed"; then
-  printcmd git commit --message "$INPUT_COMMIT_MESSAGE"
+  printcmd git commit --message "$INPUT_MY_COMMIT_MESSAGE"
   echo "Pushing git commit"
   printcmd git push -u origin HEAD:"$GITHUB_HEAD_REF"
 else
