@@ -87,9 +87,9 @@ do
   # 1) Removed comment/blank lines from source ".gitignore" files
   # 2) Strip out paths to make entries relative to public repo base directory
   # 3) Dump entries into $PUBLIC_REPO/.gitignore
-  sed -nr "s|^([^#].+)$|${f}/\1|p"                                     \
-  < "$f"                                                               \
-  | sed -r "s|^\\$PRIVATE_REPO_DIR/(.+/)?$(basename "$f")/(.+)$|\1\2|" \
+  sed -nr "s|^([^#].+)$|${f}/\1|p"                                   \
+  < "$f"                                                             \
+  | sed -r "s|^$PRIVATE_REPO_DIR/(.+/)?$(basename "$f")/(.+)$|\1\2|" \
   >> "$TMP_GITIGNORE_FILE"
 done
 # Remove redundancies created by running this script more than once (which will
@@ -125,9 +125,9 @@ printcmd git branch -a
 
 PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
 PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
-PUBLIC_ORIGIN_HEAD_REF="$(                              \
-  git branch -a                                         \
-  | sed -nr "s|^(\\$PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)$|\1|p" \
+PUBLIC_ORIGIN_HEAD_REF="$(                                 \
+  git branch -a                                            \
+  | sed -nr "s|^($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)$|\1|p" \
 )"
 if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
