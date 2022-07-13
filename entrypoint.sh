@@ -69,21 +69,22 @@ CLONE_DIR=$(mktemp -d)
 sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
 git config --global user.email "$INPUT_USER_EMAIL"
 git config --global user.name "$INPUT_USER_NAME"
-# git clone --single-branch --branch $GITHUB_BASE_REF "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
-git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
+git clone --single-branch --branch "$GITHUB_BASE_REF" "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
+git -C "$CLONE_DIR" fetch --all
+# git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 
-cd "$CLONE_DIR"
-printcmd git branch -a
+# cd "$CLONE_DIR"
+# printcmd git branch -a
 
-PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
-PUBLIC_ORIGIN_HEAD_REF="$(git branch -a | grep "$PUBLIC_ORIGIN_BRANCH_NAME")"
-if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
-  echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
-  git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
-else
-  echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
-  git checkout -b "$GITHUB_HEAD_REF"
-fi
+# PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
+# PUBLIC_ORIGIN_HEAD_REF="$(git branch -a | grep "$PUBLIC_ORIGIN_BRANCH_NAME")"
+# if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
+#   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
+#   git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
+# else
+#   echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
+#   git checkout -b "$GITHUB_HEAD_REF"
+# fi
 
 sectionheader "Check for INPUT_RENAME = $INPUT_RENAME"
 if [ ! -z "$INPUT_RENAME" ]; then
@@ -152,6 +153,22 @@ sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
 sectionheader "Copying date to file to force commit"
 printcmd date > "$CLONE_DIR/force_commit.txt"
+
+
+
+printcmd git branch -a
+
+PUBLIC_ORIGIN_BRANCH_NAME="origin/$GITHUB_HEAD_REF"
+PUBLIC_ORIGIN_HEAD_REF="$(git branch -a | grep "$PUBLIC_ORIGIN_BRANCH_NAME")"
+if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
+  echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
+  git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
+else
+  echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
+  git checkout -b "$GITHUB_HEAD_REF"
+fi
+
+
 
 sectionheader "Check for INPUT_DESTINATION_BRANCH_CREATE = $INPUT_DESTINATION_BRANCH_CREATE"
 if [ ! -z "$INPUT_DESTINATION_BRANCH_CREATE" ]; then
