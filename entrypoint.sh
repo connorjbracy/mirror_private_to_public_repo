@@ -40,7 +40,7 @@ PRIVATE_REPO_GIT_CONFIG_FULLNAME="$(                        \
 )"
 ls -la "$PRIVATE_REPO_DIR"
 cd "$PRIVATE_REPO_DIR"
-printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
+printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
 printcmd git config -l
 printcmd git remote -v
 printcmd cd .git
