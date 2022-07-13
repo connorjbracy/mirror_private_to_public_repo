@@ -82,11 +82,8 @@ if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_HEAD_REF"
 else
   echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
-  git switch -c "$GITHUB_HEAD_REF" "$PUBLIC_ORIGIN_BRANCH_NAME"
-  # git checkout -b "$GITHUB_HEAD_REF"
+  git checkout -b "$GITHUB_HEAD_REF"
 fi
-
-exit 0
 
 sectionheader "Check for INPUT_RENAME = $INPUT_RENAME"
 if [ ! -z "$INPUT_RENAME" ]; then
@@ -175,7 +172,7 @@ printcmd git add .
 if git status | grep -q "Changes to be committed"; then
   printcmd git commit --message "$INPUT_COMMIT_MESSAGE"
   echo "Pushing git commit"
-  printcmd git push -u origin HEAD:"$OUTPUT_BRANCH"
+  printcmd git push -u origin HEAD:"$GITHUB_HEAD_REF"
 else
   echo "No changes detected"
 fi
