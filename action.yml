@@ -2,37 +2,37 @@ name: 'Mirror private repo changes in the dual public repo'
 description: 'Used to duplicate a single repo between an internal (private)
               instance and a public facing instance.'
 inputs:
-  my_github_secret_pat:
+  github_secret_pat:
     description: 'The GitHub Personal Access Token (PAT) with necessary
                   permissions to publish a commit in the public repository'
     required: true
-  my_private_subdir:
+  private_subdir:
     description: 'The directory (relative to "GITHUB_WORKSPACE") where the
                   private repo lives within the GH Actions runner.
 
                   Default: "." (i.e., the GITHUB_WORKSPACE directory)'
     required: false
     default: '.'
-  my_public_repo:
+  public_repo:
     description: 'The full name of the repo that is used as the public facing
                   instance of the pair.
 
                   Default: The name of the private repo, with a presumed
                            "_private" truncated from the end.'
     required: false
-  my_user_name:
+  user_name:
     description: 'GitHub username for the commit.
 
                   Default: <github.actor>'
     required: false
     default: '${{ github.actor }}'
-  my_user_email:
+  user_email:
     description: 'Email for the git commit.
 
                   Default: <github.actor>@users.noreply.github.com'
     required: false
     default: '${{ github.actor }}@users.noreply.github.com'
-  my_working_branch_name:
+  working_branch_name:
     description: 'The name of the target branch in the public repo.
 
                   TODO: Resolve following possabilities
@@ -48,13 +48,13 @@ inputs:
                   Default: <github.head_ref>'
     required: false
     default: ${{ github.head_ref }}
-  my_commit_message:
+  commit_message:
     description: 'A custom message for the commit.
 
                   Default: <github.event.head_commit.message>'
     required: false
     default: ${{ github.event.head_commit.message }}
-  my_pseudo_gitignore_filename:
+  pseudo_gitignore_filename:
     description: 'The conventioned used to name your files that store the list
                   of files that should be in the .gitignore of the public repo,
                   but which you want to track in your private repo. (i.e., they
@@ -64,7 +64,7 @@ inputs:
                   Default: "public.gitignore"'
     required: false
     default: 'public.gitignore'
-  my_git_server:
+  git_server:
     description: 'Git server host.
 
                   Default: github.com'
@@ -74,15 +74,15 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.my-github-secret-pat }}
-    - ${{ inputs.my-user-name }}
-    - ${{ inputs.my-user-email }}
-    - ${{ inputs.my-pseudo-gitignore-filename }}
-    - ${{ inputs.my-private-subdir }}
-    - ${{ inputs.my-public-repo }}
-    - ${{ inputs.my-working-branch-name }}
-    - ${{ inputs.my-commit-message }}
-    - ${{ inputs.my-git-server }}
+    - ${{ inputs.github-secret-pat }}
+    - ${{ inputs.user-name }}
+    - ${{ inputs.user-email }}
+    - ${{ inputs.pseudo-gitignore-filename }}
+    - ${{ inputs.private-subdir }}
+    - ${{ inputs.public-repo }}
+    - ${{ inputs.working-branch-name }}
+    - ${{ inputs.commit-message }}
+    - ${{ inputs.git-server }}
 branding:
   icon: 'git-commit'
   color: 'green'
