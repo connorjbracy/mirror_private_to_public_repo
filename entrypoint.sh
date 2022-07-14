@@ -62,7 +62,7 @@ git config --global user.name "$INPUT_MY_USER_NAME"
 git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 # git -C "$CLONE_DIR" fetch --all
 
-printcmd cd "$PRIVATE_REPO_DIR"
+# printcmd cd "$PRIVATE_REPO_DIR"
 sectionheader "Check for INPUT_MY_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
 if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
   INPUT_MY_COMMIT_MESSAGE="$(                              \
@@ -72,15 +72,15 @@ fi
 
 statementheader "DEBUG Missing commit message from private"
 printcmd ls -la "$PRIVATE_REPO_DIR"
-# printcmd git log -C "$PRIVATE_REPO_DIR"
-printcmd git "$PRIVATE_REPO_DIR"
-# printcmd git log -C "$PRIVATE_REPO_DIR" -1
-printcmd git "$PRIVATE_REPO_DIR" -1
-# printcmd git log -C "$PRIVATE_REPO_DIR" -1 --pretty=format:"%s"
-printcmd git "$PRIVATE_REPO_DIR" -1 --pretty=format:"%s"
+printcmd git -C "$PRIVATE_REPO_DIR" log
+# printcmd git log
+printcmd git -C "$PRIVATE_REPO_DIR" log -1
+# printcmd git log -1
+printcmd git -C "$PRIVATE_REPO_DIR" log -1 --pretty=format:"%s"
+# printcmd git log -1 --pretty=format:"%s"
 
 INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}. Original commit message: \"$INPUT_MY_COMMIT_MESSAGE\""
-printcmd cd "$CLONE_DIR"
+# printcmd cd "$CLONE_DIR"
 
 
 
