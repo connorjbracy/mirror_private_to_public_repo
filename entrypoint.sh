@@ -164,7 +164,7 @@ cat "$PUBLIC_GITIGNORE_FILE" >> "$TMP_GITIGNORE_FILE"
 cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
 ############# Copy the Non-ignored Files from Private into Public ##############
 statementheader "Copying files from private to public, ignoring files listed in 'public/.gitignore'"
-rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR/" "$PUBLIC_REPO_DIR"
+printcmd rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR/" "$PUBLIC_REPO_DIR"
 # Again, tell git that our public repo is to be trusted
 # NOTE: Seemingly, this command should be run after any modifications to the
 #       contents of the repo directory (likely as it indexes the files at the
