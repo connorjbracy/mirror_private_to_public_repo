@@ -62,12 +62,37 @@ git config --global user.name "$INPUT_MY_USER_NAME"
 git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 # git -C "$CLONE_DIR" fetch --all
 
+
+
+sectionheader "Changing to public clone dir"
+printcmd cd "$CLONE_DIR"
+# printcmd git fetch --all
+# printcmd git branch -a
+WORKING_BRANCH_NAME=${INPUTS_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
+PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
+PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
+statementheader "Looking for '$WORKING_BRANCH_NAME' in origin"
+PUBLIC_ORIGIN_HEAD_REF="$(                                       \
+  git branch -a                                                  \
+  | sed -nr "s|^\s*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)\s*$|\1|p" \
+)"
+if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
+  echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
+  git switch -c "$WORKING_BRANCH_NAME" "$PUBLIC_ORIGIN_HEAD_REF"
+else
+  echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
+  git checkout -b "$WORKING_BRANCH_NAME"
+fi
+sectionheader "Changing to working dir"
+printcmd cd "$GITHUB_WORKSPACE"
+
+
 sectionheader "Copying contents to git repo"
 ################################################################################
 echo "INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
 PUBLIC_REPO_DIR=$CLONE_DIR
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
-TMP_GITIGNORE_FILE="./.gitignore"
+TMP_GITIGNORE_FILE="$GITHUB_WORKSPACE/.gitignore"
 echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
 find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
 | while read -r f
@@ -108,27 +133,6 @@ sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
 sectionheader "Copying date to file to force commit"
 printcmd date > "$CLONE_DIR/force_commit.txt"
-
-
-
-# printcmd git fetch --all
-# printcmd git branch -a
-WORKING_BRANCH_NAME=${INPUTS_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
-PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
-PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
-statementheader "Looking for '$WORKING_BRANCH_NAME' in origin"
-PUBLIC_ORIGIN_HEAD_REF="$(                                       \
-  git branch -a                                                  \
-  | sed -nr "s|^\s*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)\s*$|\1|p" \
-)"
-if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
-  echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
-  git switch -c "$WORKING_BRANCH_NAME" "$PUBLIC_ORIGIN_HEAD_REF"
-else
-  echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
-  git checkout -b "$WORKING_BRANCH_NAME"
-fi
-
 
 
 # sectionheader "Check for INPUT_DESTINATION_BRANCH_CREATE = $INPUT_DESTINATION_BRANCH_CREATE"
