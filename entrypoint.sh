@@ -82,17 +82,17 @@ INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOS
 ################################################################################
 
 ######################## Clone Public Repo to a tmp Dir ########################
-CLONE_DIR=$(mktemp -d)
+PUBLIC_REPO_DIR=$(mktemp -d)
 
-sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
+sectionheader "Cloning public repo to tempdir = $PUBLIC_REPO_DIR"
 git config --global user.email "$INPUT_MY_USER_EMAIL"
 git config --global user.name "$INPUT_MY_USER_NAME"
-git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
+git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$PUBLIC_REPO_DIR"
 # printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 
 ################### Find the Base Ref Branch in Public Repo ####################
 sectionheader "Changing to public clone dir"
-printcmd cd "$CLONE_DIR"
+printcmd cd "$PUBLIC_REPO_DIR"
 WORKING_BRANCH_NAME=${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
 PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
 PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
@@ -119,7 +119,6 @@ printcmd cd "$GITHUB_WORKSPACE"
 sectionheader "Copying contents to git repo"
 ####### Aggregate the Pseudo ".gitignore" Files from Private into Public #######
 echo "INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
-PUBLIC_REPO_DIR=$CLONE_DIR
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
 TMP_GITIGNORE_FILE="$GITHUB_WORKSPACE/.gitignore"
 echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
@@ -155,9 +154,9 @@ printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 ################# Commit the Private Changes to Public Origin ##################
 ################################################################################
 sectionheader "Changing to public clone dir"
-printcmd cd "$CLONE_DIR"
+printcmd cd "$PUBLIC_REPO_DIR"
 sectionheader "Copying date to file to force commit"
-printcmd date > "$CLONE_DIR/force_commit.txt"
+printcmd date > "$PUBLIC_REPO_DIR/force_commit.txt"
 
 sectionheader "Adding git commit"
 printcmd git add .
