@@ -140,7 +140,7 @@ if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
     git -C "$PRIVATE_REPO_DIR" log -1 --pretty=format:"%s" \
   )"
 fi
-INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}. Original commit message: \"$INPUT_MY_COMMIT_MESSAGE\""
 
 sectionheader "Adding git commit"
 printcmd git add .
