@@ -59,17 +59,10 @@ fi
 # fi
 
 
-statementheader "Automatically determining public repo name"
-echo "GITHUB_REPOSITORY = $GITHUB_REPOSITORY"
-TEST_CMD="$(                        \
-  echo "$GITHUB_REPOSITORY"         \
-  | sed -nr 's|^(.+)_private$|\1|p' \
-)"
-echo "GITHUB_REPOSITORY | sed -nr 's|^(.+)_private$|\1|p' = $TEST_CMD"
-
-if [ "$INPUT_MY_DESTINATION_REPO" ]; then
-  PUBLIC_REPO_FULLNAME="$INPUT_MY_DESTINATION_REPO"
+if [ "$INPUT_MY_PUBLIC_REPO" ]; then
+  PUBLIC_REPO_FULLNAME="$INPUT_MY_PUBLIC_REPO"
 else
+  statementheader "Automatically determining public repo name"
   PUBLIC_REPO_FULLNAME="$(            \
     echo "$GITHUB_REPOSITORY"         \
     | sed -nr 's|^(.+)_private$|\1|p' \
@@ -77,7 +70,10 @@ else
 fi
 echo "PUBLIC_REPO_FULLNAME = $PUBLIC_REPO_FULLNAME"
 if [ ! "$PUBLIC_REPO_FULLNAME" ]; then
-  echo "We were not given a name for the public repo, nor could we automatically determine a suitable one from the private repo name. Please provide a public repo name through the 'destination_repo' argument."
+  longecho "We were not given a name for the public repo, nor could we
+            automatically determine a suitable one from the private repo name.
+            Please provide a public repo name through the 'public_repo'
+            argument."
   exit 4
 fi
 
@@ -110,7 +106,7 @@ PUBLIC_REPO_DIR=$(mktemp -d)
 sectionheader "Cloning public repo to tempdir = $PUBLIC_REPO_DIR"
 git config --global user.email "$INPUT_MY_USER_EMAIL"
 git config --global user.name "$INPUT_MY_USER_NAME"
-git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$PUBLIC_REPO_DIR"
+git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
 
 ################### Find the Base Ref Branch in Public Repo ####################
 sectionheader "Changing to public clone dir"
