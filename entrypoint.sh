@@ -140,6 +140,13 @@ if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
     git -C "$PRIVATE_REPO_DIR" log -1 --pretty=format:"%s" \
   )"
 fi
+
+statementheader "DEBUG Missing commit message from private"
+printcmd ls -la "$PRIVATE_REPO_DIR"
+printcmd git log -C "$PRIVATE_REPO_DIR"
+printcmd git log -C "$PRIVATE_REPO_DIR" -1
+printcmd git log -C "$PRIVATE_REPO_DIR" -1 --pretty=format:"%s"
+
 INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}. Original commit message: \"$INPUT_MY_COMMIT_MESSAGE\""
 
 sectionheader "Adding git commit"
