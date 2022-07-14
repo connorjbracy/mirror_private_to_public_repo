@@ -83,7 +83,7 @@ INPUT_MY_GIT_SERVER=${INPUT_MY_GIT_SERVER:-"github.com"}
 # script and this script), git complains about certain operations unless we tell
 # it we know that the private/public repo files can be trusted (there is an
 # equivalent statement below for the private repo).
-printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
+git config --global --add safe.directory "$PRIVATE_REPO_DIR"
 sectionheader "Check for INPUT_MY_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
 if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
   INPUT_MY_COMMIT_MESSAGE="(from git log -1, likely not the user commit \
@@ -102,9 +102,9 @@ statementheader "Checkout Public Repo"
 PUBLIC_REPO_DIR=$(mktemp -d)
 
 # sectionheader "Cloning public repo to tempdir = $PUBLIC_REPO_DIR"
-printcmd git config --global user.email "$INPUT_MY_USER_EMAIL"
-printcmd git config --global user.name "$INPUT_MY_USER_NAME"
-printcmd git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
+git config --global user.email "$INPUT_MY_USER_EMAIL"
+git config --global user.name "$INPUT_MY_USER_NAME"
+git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
 
 ################### Find the Base Ref Branch in Public Repo ####################
 echo "Changing to public clone dir..."
@@ -161,7 +161,7 @@ printcmd rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR/" 
 # NOTE: Seemingly, this command should be run after any modifications to the
 #       contents of the repo directory (likely as it indexes the files at the
 #       time of the call)
-printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
+git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 
 
 ################################################################################
