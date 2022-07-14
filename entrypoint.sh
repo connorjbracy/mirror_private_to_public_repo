@@ -5,7 +5,7 @@ sectionheader() {
 }
 
 statementheader() {
-  echo "######################################## $1"
+  echo "######################################## $1..."
 }
 
 longecho() {
@@ -24,7 +24,7 @@ printcmd() {
 ################################################################################
 sectionheader "Construct/Validate Basic Inputs"
 ######################### Validate GitHub Secrets PAT ##########################
-statementheader "Checking for GitHub Secrets PAT..."
+statementheader "Checking for GitHub Secrets PAT"
 # Remind users that a PAT will be needed for pushing the commit.
 if [ "$INPUT_MY_GITHUB_SECRET_PAT" ]; then
   echo "GITHUB_SECRET_PAT = $INPUT_MY_GITHUB_SECRET_PAT"
@@ -35,7 +35,7 @@ else
 fi
 
 ################# Construct and Validate Path to Private Repo ##################
-statementheader "Checking path to private repo is what we expect..."
+statementheader "Checking path to private repo is what we expect"
 # Construct path to private repo
 PRIVATE_REPO_DIR="$(realpath "$GITHUB_WORKSPACE/$INPUT_MY_PRIVATE_SUBDIR")"
 if [ ! -d "$PRIVATE_REPO_DIR" ]; then
@@ -60,7 +60,7 @@ fi
 # fi
 
 ################ Determine/Validate Name of Public Counterpart #################
-statementheader "Determining/validating name of public counterpart..."
+statementheader "Determining/validating name of public counterpart"
 if [ "$INPUT_MY_PUBLIC_REPO" ]; then
   PUBLIC_REPO_FULLNAME="$INPUT_MY_PUBLIC_REPO"
 else
@@ -80,11 +80,11 @@ if [ ! "$PUBLIC_REPO_FULLNAME" ]; then
 fi
 
 ################### Git Server Used for Cloning Public Repo ####################
-statementheader "Setting GitHub server used for cloning public repo..."
+statementheader "Setting GitHub server used for cloning public repo"
 INPUT_MY_GIT_SERVER=${INPUT_MY_GIT_SERVER:-"github.com"}
 
 ########################### Construct Commit Message ###########################
-statementheader "Constructing the commit message..."
+statementheader "Constructing the commit message"
 # Due to mismatch ownership of checkedout files (both GitHub Actions calling
 # script and this script), git complains about certain operations unless we tell
 # it we know that the private/public repo files can be trusted (there is an
@@ -105,7 +105,7 @@ INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOS
 ################################################################################
 sectionheader "Checkout Public Repo"
 ######################## Clone Public Repo to a tmp Dir ########################
-statementheader "Cloning public repo to tmp dir..."
+statementheader "Cloning public repo to tmp dir"
 PUBLIC_REPO_DIR=$(mktemp -d)
 
 # sectionheader "Cloning public repo to tempdir = $PUBLIC_REPO_DIR"
@@ -114,7 +114,7 @@ git config --global user.name "$INPUT_MY_USER_NAME"
 git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
 
 ################### Find the Base Ref Branch in Public Repo ####################
-statementheader "Determining if public repo has branch with private repo's branch name..."
+statementheader "Determining if public repo has branch with private repo's branch name"
 WORKING_BRANCH_NAME="${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}"
 PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
 PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
@@ -126,12 +126,12 @@ PUBLIC_ORIGIN_HEAD_REF="$(                                       \
 ######## Checkout Existing Base Ref Branch or Create New with Same Name ########
 if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
-  statementheader "Switching to public repo's branch..."
+  statementheader "Switching to public repo's branch"
   git -C "$PUBLIC_REPO_DIR"                                      \
       switch -c "$WORKING_BRANCH_NAME" "$PUBLIC_ORIGIN_HEAD_REF"
 else
   echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
-  statementheader "Creating a new branch for the public repo..."
+  statementheader "Creating a new branch for the public repo"
   git -C "$PUBLIC_REPO_DIR" checkout -b "$WORKING_BRANCH_NAME"
 fi
 
@@ -141,7 +141,7 @@ fi
 ################################################################################
 sectionheader "Copying Contents to Public Git Repo"
 ####### Aggregate the Pseudo ".gitignore" Files from Private into Public #######
-statementheader "Aggregating pseudo '.gitignore' files to 'public/.gitignore'..."
+statementheader "Aggregating pseudo '.gitignore' files to 'public/.gitignore'"
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
 TMP_GITIGNORE_FILE="$GITHUB_WORKSPACE/.gitignore"
 echo "Aggregating private/*/$INPUT_MY_PSEUDO_GITIGNORE_FILENAME->public/.gitignore"
@@ -163,7 +163,7 @@ done
 cat "$PUBLIC_GITIGNORE_FILE" >> "$TMP_GITIGNORE_FILE"
 cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
 ############# Copy the Non-ignored Files from Private into Public ##############
-statementheader "Copying files from private to public, ignoring files listed in 'public/.gitignore'..."
+statementheader "Copying files from private to public, ignoring files listed in 'public/.gitignore'"
 rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR/" "$PUBLIC_REPO_DIR"
 # Again, tell git that our public repo is to be trusted
 # NOTE: Seemingly, this command should be run after any modifications to the
