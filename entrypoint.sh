@@ -22,9 +22,8 @@ printcmd() {
 ################################################################################
 ####################### Construct/Validate Basic Inputs ########################
 ################################################################################
-
+statementheader "Construct/Validate Basic Inputs"
 ######################### Validate GitHub Secrets PAT ##########################
-statementheader "Check for GitHub Secrets PAT"
 # Remind users that a PAT will be needed for pushing the commit.
 if [ "$INPUT_MY_GITHUB_SECRET_PAT" ]; then
   echo "GITHUB_SECRET_PAT = $INPUT_MY_GITHUB_SECRET_PAT"
@@ -57,7 +56,6 @@ fi
 #     \t> \$PRIVATE_REPO_GIT_CONFIG_FULLNAME=$PRIVATE_REPO_GIT_CONFIG_FULLNAME"
 #   exit 3
 # fi
-
 
 if [ "$INPUT_MY_PUBLIC_REPO" ]; then
   PUBLIC_REPO_FULLNAME="$INPUT_MY_PUBLIC_REPO"
@@ -99,21 +97,21 @@ INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOS
 ################################################################################
 ############################# Checkout Public Repo #############################
 ################################################################################
-
+statementheader "Checkout Public Repo"
 ######################## Clone Public Repo to a tmp Dir ########################
 PUBLIC_REPO_DIR=$(mktemp -d)
 
-sectionheader "Cloning public repo to tempdir = $PUBLIC_REPO_DIR"
-git config --global user.email "$INPUT_MY_USER_EMAIL"
-git config --global user.name "$INPUT_MY_USER_NAME"
-git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
+# sectionheader "Cloning public repo to tempdir = $PUBLIC_REPO_DIR"
+printcmd git config --global user.email "$INPUT_MY_USER_EMAIL"
+printcmd git config --global user.name "$INPUT_MY_USER_NAME"
+printcmd git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$PUBLIC_REPO_FULLNAME.git" "$PUBLIC_REPO_DIR"
 
 ################### Find the Base Ref Branch in Public Repo ####################
-sectionheader "Changing to public clone dir"
-WORKING_BRANCH_NAME=${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
-PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
-PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
-statementheader "Looking for '$WORKING_BRANCH_NAME' in origin"
+echo "Changing to public clone dir..."
+printcmd WORKING_BRANCH_NAME="${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}"
+printcmd PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
+printcmd PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
+echo "Looking for '$WORKING_BRANCH_NAME' in origin..."
 PUBLIC_ORIGIN_HEAD_REF="$(                                       \
   git -C "$PUBLIC_REPO_DIR" branch -a                            \
   | sed -nr "s|^\s*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)\s*$|\1|p" \
@@ -127,19 +125,20 @@ else
   echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
   git -C "$PUBLIC_REPO_DIR" checkout -b "$WORKING_BRANCH_NAME"
 fi
-sectionheader "Changing to working dir"
+# sectionheader "Changing to working dir"
 
 
 ################################################################################
 #################### Copying Contents of Private to Public #####################
 ################################################################################
-sectionheader "Copying contents to git repo"
+sectionheader "Copying contents to public git repo"
 ####### Aggregate the Pseudo ".gitignore" Files from Private into Public #######
-echo "INPUT_MY_PSEUDO_GITIGNORE_FILENAME = $INPUT_MY_PSEUDO_GITIGNORE_FILENAME"
+# echo "INPUT_MY_PSEUDO_GITIGNORE_FILENAME = $INPUT_MY_PSEUDO_GITIGNORE_FILENAME"
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
 TMP_GITIGNORE_FILE="$GITHUB_WORKSPACE/.gitignore"
-echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
-find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PSEUDO_GITIGNORE_FILENAME" \
+# echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
+echo "Aggregating private/*/$INPUT_MY_PSEUDO_GITIGNORE_FILENAME->public/.gitignore"
+printcmd find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PSEUDO_GITIGNORE_FILENAME" \
 | while read -r f; do
   # 1) Removed comment/blank lines from source ".gitignore" files
   # 2) Strip out paths to make entries relative to public repo base directory
