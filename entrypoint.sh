@@ -88,29 +88,28 @@ sectionheader "Cloning public repo to tempdir = $PUBLIC_REPO_DIR"
 git config --global user.email "$INPUT_MY_USER_EMAIL"
 git config --global user.name "$INPUT_MY_USER_NAME"
 git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$PUBLIC_REPO_DIR"
-# printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 
 ################### Find the Base Ref Branch in Public Repo ####################
 sectionheader "Changing to public clone dir"
-printcmd cd "$PUBLIC_REPO_DIR"
+# printcmd cd "$PUBLIC_REPO_DIR"
 WORKING_BRANCH_NAME=${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
 PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
 PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
 statementheader "Looking for '$WORKING_BRANCH_NAME' in origin"
 PUBLIC_ORIGIN_HEAD_REF="$(                                       \
-  git branch -a                                                  \
+  git -C "$PUBLIC_REPO_DIR" branch -a                            \
   | sed -nr "s|^\s*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)\s*$|\1|p" \
 )"
 ######## Checkout Existing Base Ref Branch or Create New with Same Name ########
 if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
-  git switch -c "$WORKING_BRANCH_NAME" "$PUBLIC_ORIGIN_HEAD_REF"
+  git -C "$PUBLIC_REPO_DIR" switch -c "$WORKING_BRANCH_NAME" "$PUBLIC_ORIGIN_HEAD_REF"
 else
   echo "Did not find $PUBLIC_ORIGIN_BRANCH_NAME, starting a new branch!"
-  git checkout -b "$WORKING_BRANCH_NAME"
+  git -C "$PUBLIC_REPO_DIR" checkout -b "$WORKING_BRANCH_NAME"
 fi
 sectionheader "Changing to working dir"
-printcmd cd "$GITHUB_WORKSPACE"
+# printcmd cd "$GITHUB_WORKSPACE"
 
 
 ################################################################################
