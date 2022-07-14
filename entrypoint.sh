@@ -108,9 +108,9 @@ git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERV
 
 ################### Find the Base Ref Branch in Public Repo ####################
 echo "Changing to public clone dir..."
-printcmd WORKING_BRANCH_NAME="${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}"
-printcmd PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
-printcmd PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
+WORKING_BRANCH_NAME="${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}"
+PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
+PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
 echo "Looking for '$WORKING_BRANCH_NAME' in origin..."
 PUBLIC_ORIGIN_HEAD_REF="$(                                       \
   git -C "$PUBLIC_REPO_DIR" branch -a                            \
@@ -138,7 +138,7 @@ PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
 TMP_GITIGNORE_FILE="$GITHUB_WORKSPACE/.gitignore"
 # echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
 echo "Aggregating private/*/$INPUT_MY_PSEUDO_GITIGNORE_FILENAME->public/.gitignore"
-printcmd find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PSEUDO_GITIGNORE_FILENAME" \
+find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PSEUDO_GITIGNORE_FILENAME" \
 | while read -r f; do
   # 1) Removed comment/blank lines from source ".gitignore" files
   # 2) Strip out paths to make entries relative to public repo base directory
