@@ -23,6 +23,13 @@ inputs:
                   Default: "." (i.e., the GITHUB_WORKSPACE directory)'
     required: false
     default: '.'
+  my_public_repo:
+    description: 'The full name of the repo that is used as the public facing
+                  instance of the pair.
+
+                  Default: The name of the private repo, with a presumed
+                           "_private" truncated from the end.'
+    required: false
   my_user_name:
     description: 'GitHub username for the commit.
 
@@ -55,13 +62,6 @@ inputs:
     description: 'A custom message for the commit.
 
                   Default: <github.event.head_commit.message>'
-    required: false
-  my_public_repo:
-    description: 'The full name of the repo that is used as the public facing
-                  instance of the pair.
-
-                  Default: The name of the private repo, with a presumed
-                           "_private" truncated from the end.'
     required: false
     default: ${{ github.event.head_commit.message }}
   my_pseudo_gitignore_filename:

@@ -58,6 +58,29 @@ fi
 #   exit 3
 # fi
 
+
+statementheader "Automatically determining public repo name"
+echo "GITHUB_REPOSITORY = $GITHUB_REPOSITORY"
+TEST_CMD="$(                        \
+  echo "$GITHUB_REPOSITORY"         \
+  | sed -nr 's|^(.+)_private$|\1|p' \
+)"
+echo "GITHUB_REPOSITORY | sed -nr 's|^(.+)_private$|\1|p' = $TEST_CMD"
+
+if [ "$INPUT_MY_DESTINATION_REPO" ]; then
+  PUBLIC_REPO_FULLNAME="$INPUT_MY_DESTINATION_REPO"
+else
+  PUBLIC_REPO_FULLNAME="$(            \
+    echo "$GITHUB_REPOSITORY"         \
+    | sed -nr 's|^(.+)_private$|\1|p' \
+  )"
+fi
+echo "PUBLIC_REPO_FULLNAME = $PUBLIC_REPO_FULLNAME"
+if [ ! "$PUBLIC_REPO_FULLNAME" ]; then
+  echo "We were not given a name for the public repo, nor could we automatically determine a suitable one from the private repo name. Please provide a public repo name through the 'destination_repo' argument."
+  exit 4
+fi
+
 ################### Git Server Used for Cloning Public Repo ####################
 INPUT_MY_GIT_SERVER=${INPUT_MY_GIT_SERVER:-"github.com"}
 
