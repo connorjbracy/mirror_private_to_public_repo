@@ -178,8 +178,6 @@ git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 sectionheader "Committing the Private Changes to Public Origin"
 statementheader "Changing to public clone dir"
 printcmd cd "$PUBLIC_REPO_DIR"
-statementheader "Copying date to file to force commit"
-printcmd date > "$PUBLIC_REPO_DIR/force_commit.txt"
 
 statementheader "Adding git commit"
 git add .
