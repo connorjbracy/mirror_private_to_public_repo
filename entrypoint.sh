@@ -18,12 +18,6 @@ printcmd() {
   { set +x;       } 2>/dev/null
 }
 
-# Due to mismatch ownership of checkedout files (both GitHub Actions calling
-# script and this script), git complains about certain operations unless we tell
-# it we know that the private/public repo files can be trusted (there is an
-# equivalent statement below for the private repo).
-printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
-
 
 ################################################################################
 ####################### Construct/Validate Basic Inputs ########################
@@ -68,6 +62,11 @@ fi
 INPUT_MY_GIT_SERVER=${INPUT_MY_GIT_SERVER:-"github.com"}
 
 ########################### Construct Commit Message ###########################
+# Due to mismatch ownership of checkedout files (both GitHub Actions calling
+# script and this script), git complains about certain operations unless we tell
+# it we know that the private/public repo files can be trusted (there is an
+# equivalent statement below for the private repo).
+printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
 sectionheader "Check for INPUT_MY_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
 if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
   INPUT_MY_COMMIT_MESSAGE="(from git log -1, likely not the user commit \
@@ -78,21 +77,20 @@ fi
 INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}. Original commit message: \"$INPUT_MY_COMMIT_MESSAGE\""
 
 
-
 ################################################################################
 ############################# Checkout Public Repo #############################
 ################################################################################
 
+######################## Clone Public Repo to a tmp Dir ########################
 CLONE_DIR=$(mktemp -d)
 
 sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
 git config --global user.email "$INPUT_MY_USER_EMAIL"
 git config --global user.name "$INPUT_MY_USER_NAME"
 git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
-# Again, tell git that our public repo is to be trusted
 # printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 
-
+################### Find the Base Ref Branch in Public Repo ####################
 sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
 WORKING_BRANCH_NAME=${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
@@ -103,6 +101,7 @@ PUBLIC_ORIGIN_HEAD_REF="$(                                       \
   git branch -a                                                  \
   | sed -nr "s|^\s*($PUBLIC_REMOTE_ORIGIN_BRANCH_NAME)\s*$|\1|p" \
 )"
+######## Checkout Existing Base Ref Branch or Create New with Same Name ########
 if [ "$PUBLIC_ORIGIN_HEAD_REF" ]; then
   echo "Found $PUBLIC_ORIGIN_HEAD_REF, pushing to existing branch!"
   git switch -c "$WORKING_BRANCH_NAME" "$PUBLIC_ORIGIN_HEAD_REF"
@@ -114,19 +113,18 @@ sectionheader "Changing to working dir"
 printcmd cd "$GITHUB_WORKSPACE"
 
 
-sectionheader "Copying contents to git repo"
 ################################################################################
+#################### Copying Contents of Private to Public #####################
+################################################################################
+sectionheader "Copying contents to git repo"
+####### Aggregate the Pseudo ".gitignore" Files from Private into Public #######
 echo "INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
 PUBLIC_REPO_DIR=$CLONE_DIR
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
 TMP_GITIGNORE_FILE="$GITHUB_WORKSPACE/.gitignore"
 echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
 find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
-| while read -r f
-do
-  # printcmd echo "File: $f"
-  # printcmd sed -nr "s|^([^#].+)$|${f}/\1|p" < "$f"
-  # printcmd basename "$f"
+| while read -r f; do
   # 1) Removed comment/blank lines from source ".gitignore" files
   # 2) Strip out paths to make entries relative to public repo base directory
   # 3) Dump entries into $PUBLIC_REPO/.gitignore
@@ -142,20 +140,20 @@ done
 # of this run)
 cat "$PUBLIC_GITIGNORE_FILE" >> "$TMP_GITIGNORE_FILE"
 cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
-printcmd cat "$PUBLIC_GITIGNORE_FILE"
-printcmd git -C "$PUBLIC_REPO_DIR" status
+# printcmd cat "$PUBLIC_GITIGNORE_FILE"
+# printcmd git -C "$PUBLIC_REPO_DIR" status
+############# Copy the Non-ignored Files from Private into Public ##############
 printcmd rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR/" "$PUBLIC_REPO_DIR"
+# Again, tell git that our public repo is to be trusted
+# NOTE: Seemingly, this command should be run after any modifications to the
+#       contents of the repo directory (likely as it indexes the files at the
+#       time of the call)
 printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
-# statementheader "Printing ownership info of /tmp"
-# PUBLIC_REPO_PARENT=$(realpath "$PUBLIC_REPO_DIR/..")
-# ls -la "$PUBLIC_REPO_PARENT"
-# statementheader "Printing ownership info of public/"
-# ls -la "$PUBLIC_REPO_DIR"
-# statementheader "Printing ownership info of public/private"
-# ls -la "$PUBLIC_REPO_DIR/private"
+
+
 ################################################################################
-
-
+################# Commit the Private Changes to Public Origin ##################
+################################################################################
 sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
 sectionheader "Copying date to file to force commit"
