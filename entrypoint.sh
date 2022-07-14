@@ -71,6 +71,7 @@ if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
 fi
 
 statementheader "DEBUG Missing commit message from private"
+printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
 printcmd ls -la "$PRIVATE_REPO_DIR"
 printcmd git -C "$PRIVATE_REPO_DIR" log
 # printcmd git log
