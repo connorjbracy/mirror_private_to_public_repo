@@ -63,6 +63,7 @@ git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERV
 # git -C "$CLONE_DIR" fetch --all
 
 # printcmd cd "$PRIVATE_REPO_DIR"
+printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
 sectionheader "Check for INPUT_MY_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
 if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
   INPUT_MY_COMMIT_MESSAGE="$(                              \
@@ -71,9 +72,10 @@ if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
 fi
 
 statementheader "DEBUG Missing commit message from private"
-printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
 printcmd ls -la "$PRIVATE_REPO_DIR"
 printcmd git -C "$PRIVATE_REPO_DIR" log
+printcmd git -C "$PRIVATE_REPO_DIR" branch -a
+printcmd git -C "$PRIVATE_REPO_DIR" remote -v
 # printcmd git log
 printcmd git -C "$PRIVATE_REPO_DIR" log -1
 # printcmd git log -1
