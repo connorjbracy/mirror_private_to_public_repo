@@ -116,11 +116,11 @@ sectionheader "Changing to working dir"
 ################################################################################
 sectionheader "Copying contents to git repo"
 ####### Aggregate the Pseudo ".gitignore" Files from Private into Public #######
-echo "INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
+echo "INPUT_MY_PSEUDO_GITIGNORE_FILENAME = $INPUT_MY_PSEUDO_GITIGNORE_FILENAME"
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
 TMP_GITIGNORE_FILE="$GITHUB_WORKSPACE/.gitignore"
 echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
-find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
+find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PSEUDO_GITIGNORE_FILENAME" \
 | while read -r f; do
   # 1) Removed comment/blank lines from source ".gitignore" files
   # 2) Strip out paths to make entries relative to public repo base directory

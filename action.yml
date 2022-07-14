@@ -64,7 +64,7 @@ inputs:
                            "_private" truncated from the end.'
     required: false
     default: ${{ github.event.head_commit.message }}
-  my_public_gitignore_filename_convention:
+  my_pseudo_gitignore_filename:
     description: 'The conventioned used to name your files that store the list
                   of files that should be in the .gitignore of the public repo,
                   but which you want to track in your private repo. (i.e., they
@@ -94,7 +94,7 @@ runs:
     - ${{ inputs.my-github-secret-pat }}
     - ${{ inputs.my-user-name }}
     - ${{ inputs.my-user-email }}
-    - ${{ inputs.my-public-gitignore-filename-convention }}
+    - ${{ inputs.my-pseudo-gitignore-filename }}
     - ${{ inputs.my-private-subdir }}
     - ${{ inputs.my-public-repo }}
     - ${{ inputs.my-working-branch-name }}
