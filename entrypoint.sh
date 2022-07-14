@@ -18,6 +18,18 @@ printcmd() {
   { set +x;       } 2>/dev/null
 }
 
+# Due to mismatch ownership of checkedout files (both GitHub Actions calling
+# script and this script), git complains about certain operations unless we tell
+# it we know that the private/public repo files can be trusted (there is an
+# equivalent statement below for the private repo).
+printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
+
+
+################################################################################
+####################### Construct/Validate Basic Inputs ########################
+################################################################################
+
+######################### Validate GitHub Secrets PAT ##########################
 statementheader "Check for GitHub Secrets PAT"
 # Remind users that a PAT will be needed for pushing the commit.
 if [ "$INPUT_MY_GITHUB_SECRET_PAT" ]; then
@@ -28,6 +40,7 @@ else
   exit 1
 fi
 
+################# Construct and Validate Path to Private Repo ##################
 # Construct path to private repo
 PRIVATE_REPO_DIR="$(realpath "$GITHUB_WORKSPACE/$INPUT_MY_PRIVATE_SUBDIR")"
 if [ ! -d "$PRIVATE_REPO_DIR" ]; then
@@ -51,46 +64,37 @@ fi
 #   exit 3
 # fi
 
+################### Git Server Used for Cloning Public Repo ####################
 INPUT_MY_GIT_SERVER=${INPUT_MY_GIT_SERVER:-"github.com"}
+
+########################### Construct Commit Message ###########################
+sectionheader "Check for INPUT_MY_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
+if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
+  INPUT_MY_COMMIT_MESSAGE="(from git log -1, likely not the user commit \
+  message) - $(                                                         \
+    git -C "$PRIVATE_REPO_DIR" log -1 --pretty=format:"%s"              \
+  )"
+fi
+INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}. Original commit message: \"$INPUT_MY_COMMIT_MESSAGE\""
+
+
+
+################################################################################
+############################# Checkout Public Repo #############################
+################################################################################
 
 CLONE_DIR=$(mktemp -d)
 
-# echo "Cloning destination git repository"
 sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
 git config --global user.email "$INPUT_MY_USER_EMAIL"
 git config --global user.name "$INPUT_MY_USER_NAME"
 git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
-# git -C "$CLONE_DIR" fetch --all
-
-# printcmd cd "$PRIVATE_REPO_DIR"
-printcmd git config --global --add safe.directory "$PRIVATE_REPO_DIR"
-sectionheader "Check for INPUT_MY_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
-if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
-  INPUT_MY_COMMIT_MESSAGE="$(                              \
-    git -C "$PRIVATE_REPO_DIR" log -1 --pretty=format:"%s" \
-  )"
-fi
-
-statementheader "DEBUG Missing commit message from private"
-printcmd ls -la "$PRIVATE_REPO_DIR"
-printcmd git -C "$PRIVATE_REPO_DIR" log
-printcmd git -C "$PRIVATE_REPO_DIR" branch -a
-printcmd git -C "$PRIVATE_REPO_DIR" remote -v
-# printcmd git log
-printcmd git -C "$PRIVATE_REPO_DIR" log -1
-# printcmd git log -1
-printcmd git -C "$PRIVATE_REPO_DIR" log -1 --pretty=format:"%s"
-# printcmd git log -1 --pretty=format:"%s"
-
-INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}. Original commit message: \"$INPUT_MY_COMMIT_MESSAGE\""
-# printcmd cd "$CLONE_DIR"
-
+# Again, tell git that our public repo is to be trusted
+printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 
 
 sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
-# printcmd git fetch --all
-# printcmd git branch -a
 WORKING_BRANCH_NAME=${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
 PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
 PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
@@ -141,7 +145,7 @@ cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
 printcmd cat "$PUBLIC_GITIGNORE_FILE"
 printcmd git -C "$PUBLIC_REPO_DIR" status
 printcmd rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR/" "$PUBLIC_REPO_DIR"
-printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
+# printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 # statementheader "Printing ownership info of /tmp"
 # PUBLIC_REPO_PARENT=$(realpath "$PUBLIC_REPO_DIR/..")
 # ls -la "$PUBLIC_REPO_PARENT"
