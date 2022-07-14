@@ -47,13 +47,13 @@ inputs:
 
                   Default: <github.head_ref>'
     required: false
-    default: ${{ github.head_ref }}
+    default: '${{ github.head_ref }}'
   commit_message:
     description: 'A custom message for the commit.
 
                   Default: <github.event.head_commit.message>'
     required: false
-    default: ${{ github.event.head_commit.message }}
+    default: '${{ github.event.head_commit.message }}'
   pseudo_gitignore_filename:
     description: 'The conventioned used to name your files that store the list
                   of files that should be in the .gitignore of the public repo,
