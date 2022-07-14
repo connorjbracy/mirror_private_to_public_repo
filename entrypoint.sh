@@ -20,8 +20,8 @@ printcmd() {
 
 statementheader "Check for GitHub Secrets PAT"
 # Remind users that a PAT will be needed for pushing the commit.
-if [ "$INPUTS_MY_GITHUB_SECRET_PAT" ]; then
-  echo "GITHUB_SECRET_PAT = $INPUTS_MY_GITHUB_SECRET_PAT"
+if [ "$INPUT_MY_GITHUB_SECRET_PAT" ]; then
+  echo "GITHUB_SECRET_PAT = $INPUT_MY_GITHUB_SECRET_PAT"
 else
   longecho "Required argument 'github_secret_pat' missing!
             Please review your GitHub Actions script that called this Action."
@@ -29,7 +29,7 @@ else
 fi
 
 # Construct path to private repo
-PRIVATE_REPO_DIR="$(realpath "$GITHUB_WORKSPACE/$INPUTS_MY_PRIVATE_SUBDIR")"
+PRIVATE_REPO_DIR="$(realpath "$GITHUB_WORKSPACE/$INPUT_MY_PRIVATE_SUBDIR")"
 if [ ! -d "$PRIVATE_REPO_DIR" ]; then
   echo "Could not find the directory containing the private repo: $PRIVATE_REPO_DIR"
   exit 2
@@ -41,7 +41,7 @@ fi
 # )"
 # if [ "$PRIVATE_REPO_GIT_CONFIG_FULLNAME" != "$GITHUB_REPOSITORY" ]; then
 #   longecho "Using the given argument
-#     \t'private_subdir': $INPUTS_MY_PRIVATE_SUBDIR
+#     \t'private_subdir': $INPUT_MY_PRIVATE_SUBDIR
 #     we were unable to find a directory corresponding to the expected
 #     github repository:
 #     \t'github.repository': $GITHUB_REPOSITORY
@@ -51,15 +51,15 @@ fi
 #   exit 3
 # fi
 
-INPUTS_MY_GIT_SERVER=${INPUTS_MY_GIT_SERVER:-"github.com"}
+INPUT_MY_GIT_SERVER=${INPUT_MY_GIT_SERVER:-"github.com"}
 
 CLONE_DIR=$(mktemp -d)
 
 # echo "Cloning destination git repository"
 sectionheader "Cloning public repo to tempdir = $CLONE_DIR"
-git config --global user.email "$INPUTS_MY_USER_EMAIL"
-git config --global user.name "$INPUTS_MY_USER_NAME"
-git clone "https://x-access-token:$INPUTS_MY_GITHUB_SECRET_PAT@$INPUTS_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
+git config --global user.email "$INPUT_MY_USER_EMAIL"
+git config --global user.name "$INPUT_MY_USER_NAME"
+git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 # git -C "$CLONE_DIR" fetch --all
 
 
@@ -68,7 +68,7 @@ sectionheader "Changing to public clone dir"
 printcmd cd "$CLONE_DIR"
 # printcmd git fetch --all
 # printcmd git branch -a
-WORKING_BRANCH_NAME=${INPUTS_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
+WORKING_BRANCH_NAME=${INPUT_MY_WORKING_BRANCH_NAME:-"$GITHUB_HEAD_REF"}
 PUBLIC_ORIGIN_BRANCH_NAME="origin/$WORKING_BRANCH_NAME"
 PUBLIC_REMOTE_ORIGIN_BRANCH_NAME="remotes/$PUBLIC_ORIGIN_BRANCH_NAME"
 statementheader "Looking for '$WORKING_BRANCH_NAME' in origin"
@@ -89,12 +89,12 @@ printcmd cd "$GITHUB_WORKSPACE"
 
 sectionheader "Copying contents to git repo"
 ################################################################################
-echo "INPUTS_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUTS_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
+echo "INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION = $INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION"
 PUBLIC_REPO_DIR=$CLONE_DIR
 PUBLIC_GITIGNORE_FILE="$PUBLIC_REPO_DIR/.gitignore"
 TMP_GITIGNORE_FILE="$GITHUB_WORKSPACE/.gitignore"
 echo "PUBLIC_GITIGNORE_FILE = $PUBLIC_GITIGNORE_FILE"
-find "$PRIVATE_REPO_DIR" -name "$INPUTS_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
+find "$PRIVATE_REPO_DIR" -name "$INPUT_MY_PUBLIC_GITIGNORE_FILENAME_CONVENTION" \
 | while read -r f
 do
   # printcmd echo "File: $f"
@@ -143,15 +143,15 @@ printcmd date > "$CLONE_DIR/force_commit.txt"
 # fi
 # sectionheader "Concluded OUTPUT_BRANCH = $OUTPUT_BRANCH"
 
-sectionheader "Check for INPUT_COMMIT_MESSAGE = $INPUTS_MY_COMMIT_MESSAGE"
-if [ -z "$INPUTS_MY_COMMIT_MESSAGE" ]; then
-  INPUTS_MY_COMMIT_MESSAGE="Update from https://$INPUTS_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+sectionheader "Check for INPUT_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
+if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
+  INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
 fi
 
 sectionheader "Adding git commit"
 printcmd git add .
 if git status | grep -q "Changes to be committed"; then
-  printcmd git commit --message "$INPUTS_MY_COMMIT_MESSAGE"
+  printcmd git commit --message "$INPUT_MY_COMMIT_MESSAGE"
   echo "Pushing git commit"
   printcmd git push -u origin HEAD:"$GITHUB_HEAD_REF"
 else
