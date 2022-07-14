@@ -90,7 +90,7 @@ git config --global user.email "$INPUT_MY_USER_EMAIL"
 git config --global user.name "$INPUT_MY_USER_NAME"
 git clone "https://x-access-token:$INPUT_MY_GITHUB_SECRET_PAT@$INPUT_MY_GIT_SERVER/$INPUT_DESTINATION_REPO.git" "$CLONE_DIR"
 # Again, tell git that our public repo is to be trusted
-printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
+# printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 
 
 sectionheader "Changing to public clone dir"
@@ -145,7 +145,7 @@ cat "$TMP_GITIGNORE_FILE" | sort | uniq > "$PUBLIC_GITIGNORE_FILE"
 printcmd cat "$PUBLIC_GITIGNORE_FILE"
 printcmd git -C "$PUBLIC_REPO_DIR" status
 printcmd rsync -va --exclude-from="$PUBLIC_GITIGNORE_FILE" "$PRIVATE_REPO_DIR/" "$PUBLIC_REPO_DIR"
-# printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
+printcmd git config --global --add safe.directory "$PUBLIC_REPO_DIR"
 # statementheader "Printing ownership info of /tmp"
 # PUBLIC_REPO_PARENT=$(realpath "$PUBLIC_REPO_DIR/..")
 # ls -la "$PUBLIC_REPO_PARENT"
