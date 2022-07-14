@@ -134,19 +134,13 @@ printcmd cd "$CLONE_DIR"
 sectionheader "Copying date to file to force commit"
 printcmd date > "$CLONE_DIR/force_commit.txt"
 
-
-# sectionheader "Check for INPUT_DESTINATION_BRANCH_CREATE = $INPUT_DESTINATION_BRANCH_CREATE"
-# if [ ! -z "$INPUT_DESTINATION_BRANCH_CREATE" ]; then
-#   echo "Creating new branch: ${INPUT_DESTINATION_BRANCH_CREATE}"
-#   git checkout -b "$INPUT_DESTINATION_BRANCH_CREATE"
-#   OUTPUT_BRANCH="$INPUT_DESTINATION_BRANCH_CREATE"
-# fi
-# sectionheader "Concluded OUTPUT_BRANCH = $OUTPUT_BRANCH"
-
-sectionheader "Check for INPUT_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
+sectionheader "Check for INPUT_MY_COMMIT_MESSAGE = $INPUT_MY_COMMIT_MESSAGE"
 if [ -z "$INPUT_MY_COMMIT_MESSAGE" ]; then
-  INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+  INPUT_MY_COMMIT_MESSAGE="$(                              \
+    git -C "$PRIVATE_REPO_DIR" log -1 --pretty=format:"%s" \
+  )"
 fi
+INPUT_MY_COMMIT_MESSAGE="Update from https://$INPUT_MY_GIT_SERVER/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
 
 sectionheader "Adding git commit"
 printcmd git add .
