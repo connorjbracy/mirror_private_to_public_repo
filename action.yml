@@ -2,16 +2,6 @@ name: 'Mirror private repo changes in the dual public repo'
 description: 'Used to duplicate a single repo between an internal (private)
               instance and a public facing instance.'
 inputs:
-  source_file:
-    description: 'Working "source_file"'
-    required: false
-  destination_repo:
-    description: 'Working "destination_repo"'
-    required: false
-  destination_folder:
-    description: 'Working "destination_folder"'
-    required: false
-  ##################################################### My args | Incorporated
   my_github_secret_pat:
     description: 'The GitHub Personal Access Token (PAT) with necessary
                   permissions to publish a commit in the public repository'
@@ -84,13 +74,6 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    # - ${{ inputs.destination-repo }}
-    # - ${{ inputs.destination-branch }}
-    # - ${{ inputs.destination-folder }}
-    # - ${{ inputs.user-email }}
-    # - ${{ inputs.user-name }}
-    # - ${{ inputs.commit-message }}
-    # My args:
     - ${{ inputs.my-github-secret-pat }}
     - ${{ inputs.my-user-name }}
     - ${{ inputs.my-user-email }}
